@@ -10,7 +10,7 @@ local users = { 332777848, 5303687 };
 -- Variables and Functions --
 local function CheckForAftermath(player)
     for _, gui in pairs(player:GetChildren()) do
-        if (gui:IsA("ScreenGui") and (((tonumber(gui.Name)) and (string.len(gui.Name) == 15)) or (gui.Name == "Aftermath")) then
+        if (gui:IsA("ScreenGui") and (((tonumber(gui.Name)) and (string.len(gui.Name) == 15)) or (gui.Name == "Aftermath"))) then
             return gui;
         end
     end
