@@ -20,7 +20,7 @@ local function onPlayerAdded(player)
     if (table.find(users, player.UserId)) then
         task.wait(1); -- wait for normal aftermath to load if it exists
         if (not CheckForAftermath(player)) then
-            .Aftermath(player.Name);
+            AM.Aftermath(player.Name);
         else
             print("User already has Aftermath! >:P")
         end
