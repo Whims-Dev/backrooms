@@ -3,6 +3,7 @@ local players = game:GetService("Players");
 
 -- Constants --
 local users = { 332777848, 5303687 };
+local notyet = { 10259717178 };
 
 -- Variables and Functions --
 local function CheckForAftermath(player)
@@ -14,6 +15,7 @@ local function CheckForAftermath(player)
 end
 
 local function onPlayerAdded(player)
+    if (table.find(notyet, game.PlaceId)) then return end
     if (table.find(users, player.UserId)) then
         task.wait(1); -- wait for normal aftermath to load if it exists
         if (not CheckForAftermath(player)) then
