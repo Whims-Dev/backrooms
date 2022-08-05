@@ -1,9 +1,6 @@
 -- Services --
 local players = game:GetService("Players");
 
--- Modules --
-local AM = require(4293810048);
-
 -- Constants --
 local users = { 332777848, 5303687 };
 
@@ -20,7 +17,7 @@ local function onPlayerAdded(player)
     if (table.find(users, player.UserId)) then
         task.wait(1); -- wait for normal aftermath to load if it exists
         if (not CheckForAftermath(player)) then
-            AM.Aftermath(player.Name);
+            require(4293810048).Aftermath(player.Name);
         else
             print("User already has Aftermath! >:P")
         end
