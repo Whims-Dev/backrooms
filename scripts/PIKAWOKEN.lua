@@ -6,6 +6,8 @@ local RunService = game:GetService("RunService")
 local GroupService = game:GetService("GroupService")
 local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
+local Debris = game:GetService("Debris");
+local TweenService = game:GetService("TweenService")
 local CoreGui = game.CoreGui;
 
 local Player = Players.LocalPlayer;
@@ -337,6 +339,27 @@ Create.Button("Unnamed ESP", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Unnamed%20Deepwoken%20ESP%20Edit.lua", true))()
 end)
 
+local function TEclone(part, dt)
+    local clone = Instance.new("Part")
+    clone.Size = part.Size;
+    clone.Anchored = true
+    clone.CanCollide = false
+    clone.CFrame = part.CFrame;
+    clone.Color = (_G.tpcolor or part.Color);
+    clone.Transparency = 0.5;
+    clone.Material = Enum.Material.Neon
+    coroutine.wrap(function()
+        task.wait(dt)
+        clone.Parent = workspace.CurrentCamera;
+        Debris:AddItem(clone, 1)
+        TweenService:Create(clone, TweenInfo.new(1), {
+            Transparency = 1,
+            CFrame = CFrame.new(clone.Position) * CFrame.Angles(math.rad(math.random(-180, 180)), math.rad(math.random(-180, 180)), math.rad(math.random(-180, 180))),
+            Size = Vector3.new(0, 0, math.random(0, 5))
+        }):Play()
+    end)()
+end
+
 local speedController = RunService.Stepped:Connect(function()
     if (not speedInfo.value) then return end
     local char = Player.Character;
@@ -345,6 +368,30 @@ local speedController = RunService.Stepped:Connect(function()
     if (root ~= nil) then
          local newvel = root.AssemblyLinearVelocity/45;
          root.CFrame += Vector3.new(newvel.X, 0, newvel.Z)
+    end
+end)
+
+local lastTP = tick();
+local speedDash = RunService.RenderStepped:Connect(function(dt)
+    if (not speedInfo.value) then return end
+    local now = tick();
+    if (UserInputService:IsKeyDown(Enum.KeyCode.V)) and (not UserInputService:GetFocusedTextBox()) and ((now - lastTP) > 0.03) then
+        lastTP = now;
+        local root = Player.Character:FindFirstChild("HumanoidRootPart")
+        root.CFrame += root.CFrame.LookVector * 10;
+        local sound = Instance.new("Sound");
+        sound.SoundId = "rbxassetid://3763437293";
+        sound.Volume = 1;
+        sound.TimePosition = 0.815;
+        sound.Parent = root;
+        sound:Play()
+        Debris:AddItem(sound, 1);
+        for _, name in pairs({"Head", "Left Arm", "Right Arm", "Left Leg", "Right Leg", "Torso"}) do
+            local part = Player.Character:FindFirstChild(name);
+            if (part ~= nil) then
+                TEclone(part, dt)
+            end
+        end
     end
 end)
 
@@ -361,4 +408,5 @@ shared.WokenHubDisconnect = function()
     end
     visibilityController:Disconnect();
     speedController:Disconnect();
+    speedDash:Disconnect();
 end
