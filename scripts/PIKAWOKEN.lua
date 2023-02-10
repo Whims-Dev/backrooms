@@ -375,7 +375,7 @@ local lastTP = tick();
 local speedDash = RunService.RenderStepped:Connect(function(dt)
     if (not speedInfo.value) then return end
     local now = tick();
-    if (UserInputService:IsKeyDown(Enum.KeyCode.V)) and (not UserInputService:GetFocusedTextBox()) and ((now - lastTP) > 0.06) then
+    if (UserInputService:IsKeyDown(Enum.KeyCode.V)) and (not UserInputService:GetFocusedTextBox()) and ((now - lastTP) > 0.12) then
         lastTP = now;
         local root = Player.Character:FindFirstChild("HumanoidRootPart")
         root.CFrame += root.CFrame.LookVector * 10;
