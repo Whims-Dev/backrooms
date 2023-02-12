@@ -316,7 +316,8 @@ function Create.Toggle(Text, Default, Callback)
     return toggle, controller, info;
 end
 
-local _, _, speedInfo = Create.Toggle("Speed", false)
+local _, _, speedInfo = Create.Toggle("Speedhack", false)
+local _, _, speedSpeedInfo = Create.Number("Dash Speed (ms)", 120, 60, 120)
 local _, _, jumpInfo = Create.Number("Jump Strength", 100, 0, 600)
 Create.Button("Super Jump", function()
     Player.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, jumpInfo.value, 0)
@@ -375,7 +376,7 @@ local lastTP = tick();
 local speedDash = RunService.RenderStepped:Connect(function(dt)
     if (not speedInfo.value) then return end
     local now = tick();
-    if (UserInputService:IsKeyDown(Enum.KeyCode.V)) and (not UserInputService:GetFocusedTextBox()) and ((now - lastTP) > 0.12) then
+    if (UserInputService:IsKeyDown(Enum.KeyCode.V)) and (not UserInputService:GetFocusedTextBox()) and ((now - lastTP) > speedSpeedInfo.value/1000) then
         lastTP = now;
         local root = Player.Character:FindFirstChild("HumanoidRootPart")
         root.CFrame += root.CFrame.LookVector * 10;
