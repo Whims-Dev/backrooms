@@ -312,6 +312,7 @@ function Create.Toggle(Text, Default, Callback)
     local controller = button.MouseButton1Click:Connect(function()
         frame.Visible = not frame.Visible;
         info.value = frame.Visible;
+        Callback();
     end)
     return toggle, controller, info;
 end
@@ -339,6 +340,48 @@ end)
 Create.Button("Unnamed ESP", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Unnamed%20Deepwoken%20ESP%20Edit.lua", true))()
 end)
+local _, _, spectateInfo = Create.Toggle("Leaderboard Spectate", false)
+local function NewSpectate(frame)
+    if (frame:IsA("Frame")) then
+        frame.InputBegan:Connect(function(input, gpe)
+            if (not spectateInfo.value) then return end
+            if (gpe) then return end
+            if (input.UserInputType == Enum.UserInputType.MouseButton1) then
+                local plr = Players:FindFirstChild(frame.Player.Text);
+                if (plr ~= nil) then
+                    local character = plr.Character;
+                    if (character == nil) then return end
+                    local humanoid = character:FindFirstChild("Humanoid")
+                    if (humanoid == nil) then return end
+                    if (workspace.CurrentCamera.CameraSubject == humanoid) then
+                        workspace.CurrentCamera.CameraSubject = Player.Character.Humanoid
+                    else
+                        workspace.CurrentCamera.CameraSubject = humanoid;
+                    end
+                end
+            end
+        end)
+        frame.Player.Changed:Connect(function()
+            if (not spectateInfo.value) then return end
+            local plr = Players:FindFirstChild(frame.Player.Text);
+            if (plr ~= nil) then
+                frame.Player.TextColor3 = Color3.new(1, 0, 0)
+            else
+                frame.Player.TextColor3 = Color3.new(1, 1, 1)
+            end
+        end)
+    end
+end
+local function NewLeaderboard()
+    Player.PlayerGui.LeaderboardGui.MainFrame.ScrollingFrame.ChildAdded:Connect(NewSpectate)
+    for _, f in pairs(Player.PlayerGui.LeaderboardGui.MainFrame.ScrollingFrame:GetChildren()) do
+        NewSpectate(f)
+    end
+end
+if (Player:FindFirstChild("PlayerGui")) and (Player.PlayerGui:FindFirstChild("LeaderboardGui")) then
+    NewLeaderboard()
+end
+Player.CharacterAdded:Connect(NewLeaderboard)
 
 local function TEclone(part, dt)
     local clone = Instance.new("Part")
