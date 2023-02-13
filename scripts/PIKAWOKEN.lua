@@ -318,7 +318,7 @@ function Create.Toggle(Text, Default, Callback)
 end
 
 local _, _, speedInfo = Create.Toggle("Speedhack", false)
-local _, _, speedSpeedInfo = Create.Number("Dash Speed (ms)", 120, 60, 120)
+local _, _, speedSpeedInfo = Create.Number("Dash Speed (ms)", 60, 60, 120)
 local _, _, jumpInfo = Create.Number("Jump Strength", 100, 0, 600)
 Create.Button("Super Jump", function()
     Player.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, jumpInfo.value, 0)
