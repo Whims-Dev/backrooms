@@ -312,7 +312,7 @@ function Create.Toggle(Text, Default, Callback)
     local controller = button.MouseButton1Click:Connect(function()
         frame.Visible = not frame.Visible;
         info.value = frame.Visible;
-        Callback();
+        Callback(info.value);
     end)
     return toggle, controller, info;
 end
@@ -339,6 +339,18 @@ Create.Button("Mod Check", function()
 end)
 Create.Button("Unnamed ESP", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Unnamed%20Deepwoken%20ESP%20Edit.lua", true))()
+end)
+Create.Toggle("Custom Voices", false, function(value)
+    if (value) then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/DeepwokenVoices.lua", true))()
+    else
+        if (shared.PlayerAddedDsounds) then
+            shared.PlayerAddedDsounds:Disconnect()
+        end
+        if (shared.CharacterAddedDsounds) then
+            shared.CharacterAddedDsounds:Disconnect()
+        end
+    end
 end)
 local _, _, spectateInfo = Create.Toggle("Leaderboard Spectate", false)
 local function NewSpectate(frame)
