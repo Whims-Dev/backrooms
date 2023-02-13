@@ -205,7 +205,10 @@ function Create.Button(Text, Callback)
     uIAspectRatioConstraint2.Name = "UIAspectRatioConstraint"
     uIAspectRatioConstraint2.AspectRatio = 10.8
     uIAspectRatioConstraint2.Parent = button
-    local click = button1.MouseButton1Click:Connect(Callback)
+    local click;
+    if (Callback ~= nil) then
+        click = button1.MouseButton1Click:Connect(Callback)
+    end
     return button, click;
 end
 
@@ -253,11 +256,16 @@ function Create.Number(Text, Default, Min, Max, Callback)
         local value = tonumber(button.Text);
         if (value ~= nil) and (value >= Min) and (value <= Max) then
             info.value, lastValue = value, value;
-            Callback(value);
+            if (Callback ~= nil) then
+                Callback(value);
+            end
         else
             button.Text = lastValue;
         end
     end)
+    if (Callback ~= nil) then
+        Callback(info.value);
+    end
     return number, controller, info;
 end
 
@@ -312,29 +320,47 @@ function Create.Toggle(Text, Default, Callback)
     local controller = button.MouseButton1Click:Connect(function()
         frame.Visible = not frame.Visible;
         info.value = frame.Visible;
-        Callback(info.value);
+        if (Callback ~= nil) then
+            Callback(info.value);
+        end
     end)
+    if (Callback ~= nil) then
+        Callback(info.value);
+    end
     return toggle, controller, info;
 end
 
 local _, _, speedInfo = Create.Toggle("Speedhack", false)
-local _, _, speedSpeedInfo = Create.Number("Dash Speed (ms)", 60, 60, 120)
+local _, _, speedSpeedInfo = Create.Number("Dash Speed (ms)", 120, 60, 120)
 local _, _, jumpInfo = Create.Number("Jump Strength", 100, 0, 600)
 Create.Button("Super Jump", function()
     Player.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, jumpInfo.value, 0)
 end)
-Create.Button("Mod Check", function()
-    Notify("Mod Check", "Checking for moderators, please stand by...", 5)
-    local found = false;
-    for _, p in pairs(Players:GetPlayers()) do
-        local Rank = p:GetRankInGroup(5212858);
-        if (Rank) and (Rank >= 1) then
-            Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank()), 5)
-            found = true;
+local modcheck;
+Create.Toggle("Mod Check", false, function(value)
+    if (value) then
+        Notify("Mod Check", "Checking for moderators, please stand by...", 5)
+        modcheck = Players.PlayerAdded:Connect(function(p)
+            local Rank = p:GetRankInGroup(5212858);
+            if (Rank) and (Rank >= 1) then
+                Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank()), 5)
+            end
+        end)
+        local found = false;
+        for _, p in pairs(Players:GetPlayers()) do
+            local Rank = p:GetRankInGroup(5212858);
+            if (Rank) and (Rank >= 1) then
+                Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank()), 5)
+                found = true;
+            end
         end
-    end
-    if (not found) then
-        Notify("Mod Check", "All clear!", 5)
+        if (not found) then
+            Notify("Mod Check", "All clear!", 5)
+        end
+    else
+        if (modcheck ~= nil) then
+            modcheck:Disconnect()
+        end
     end
 end)
 Create.Button("Unnamed ESP", function()
