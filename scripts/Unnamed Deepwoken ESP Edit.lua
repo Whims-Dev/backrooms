@@ -147,7 +147,8 @@ local Modules = {
 	[6032399813] = DeepwokenInfo, -- Etrean
     [6473861193] = DeepwokenInfo, -- Eastern Luminent
 	[8668476218] = DeepwokenInfo, -- Trial of One
-    [5735553160] = DeepwokenInfo -- Depths
+    [5735553160] = DeepwokenInfo, -- Depths
+	[8668476218] = DeepwokenInfo, -- Layer 2
 };
 
 if Modules[game.PlaceId] ~= nil or Modules[game.GameId] ~= nil then
