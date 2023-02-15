@@ -1,4 +1,4 @@
--- pornhub script
+-- pikahub script
 -- made by tk
 
 local Players = game:GetService("Players")
@@ -12,21 +12,12 @@ local CoreGui = game.CoreGui;
 
 local Player = Players.LocalPlayer;
 
-local GroupInfo = GroupService:GetGroupInfoAsync(5212858);
-local function GetRoleInfoFromRank(Rank)
-    for _, info in pairs(GroupInfo.Roles) do
-        if (info.Rank == Rank) then
-            return info;
-        end
-    end
-end
-
 local function Notify(Title, Text, Duration)
     StarterGui:SetCore("SendNotification", {Title=Title, Text=Text, Duration=(Duration or 5), Button1="OK"})
 end
 
-if (shared.WokenHubDisconnect) then
-    shared.WokenHubDisconnect();
+if (shared.PikaHubDisconnect) then
+    shared.PikaHubDisconnect();
 end
 
 local function Padding(parent, bottom, left, right, top)
@@ -43,7 +34,7 @@ end
 local function FeatureText(parent, text)
     local feature = Instance.new("TextLabel")
     feature.Name = "Feature"
-    feature.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json")
+    feature.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
     feature.Text = text
     feature.TextColor3 = Color3.fromRGB(255, 255, 255)
     feature.TextScaled = true
@@ -52,17 +43,9 @@ local function FeatureText(parent, text)
     feature.TextXAlignment = Enum.TextXAlignment.Left
     feature.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     feature.BackgroundTransparency = 1
-    feature.Size = UDim2.fromScale(0.8, 1)
-    Padding(feature, 0.2, 0.05, 0, 0.2)
-    local uITextSizeConstraint = Instance.new("UITextSizeConstraint")
-    uITextSizeConstraint.Name = "UITextSizeConstraint"
-    uITextSizeConstraint.MaxTextSize = 16
-    uITextSizeConstraint.Parent = feature
-    local uIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
-    uIAspectRatioConstraint.Name = "UIAspectRatioConstraint"
-    uIAspectRatioConstraint.AspectRatio = 8.6
-    uIAspectRatioConstraint.Parent = feature
-    feature.Parent = parent
+    feature.Position = UDim2.fromScale(0.0381, 0.26)
+    feature.Size = UDim2.fromScale(0.708, 0.46)
+    feature.Parent = parent;
     return feature;
 end
 
@@ -74,270 +57,303 @@ local function Roundify(parent)
     return uICorner;
 end
 
-local hubMain = Instance.new("ScreenGui")
-hubMain.Name = "PIKAWOKENHUB"
-hubMain.IgnoreGuiInset = true
-hubMain.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
-hubMain.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-hubMain.Parent = CoreGui;
+local pikaHub = Instance.new("ScreenGui")
+pikaHub.Name = "PikaHub"
+pikaHub.IgnoreGuiInset = true
+pikaHub.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
+pikaHub.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-local mainFrame = Instance.new("Frame")
-mainFrame.Name = "MainFrame"
-mainFrame.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
-mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 255)
-mainFrame.BorderSizePixel = 2
-mainFrame.Position = UDim2.fromScale(0.763, 0.357)
-mainFrame.Active = true
-mainFrame.Draggable = true
-mainFrame.Size = UDim2.fromScale(0.226, 0.488)
+local main = Instance.new("Frame")
+main.Name = "Main"
+main.BackgroundColor3 = Color3.fromRGB(26, 32, 36)
+main.BorderColor3 = Color3.fromRGB(13, 16, 21)
+main.BorderSizePixel = 3
+main.Position = UDim2.fromScale(0.0211, 0.576)
+main.Size = UDim2.fromScale(0.46, 0.394)
 
-local title = Instance.new("TextLabel")
-title.Name = "Title"
-title.FontFace = Font.new(
+local top = Instance.new("Frame")
+top.Name = "Top"
+top.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+top.BackgroundTransparency = 0.5
+top.BorderColor3 = Color3.fromRGB(27, 42, 53)
+top.BorderSizePixel = 0
+top.Size = UDim2.fromScale(1, 0.2)
+
+local scriptTitle = Instance.new("TextLabel")
+scriptTitle.Name = "ScriptTitle"
+scriptTitle.FontFace = Font.new(
   "rbxasset://fonts/families/GothamSSm.json",
   Enum.FontWeight.Heavy,
   Enum.FontStyle.Normal
 )
-title.Text = "PIKA HUB"
-title.TextColor3 = Color3.fromRGB(27, 42, 53)
-title.TextScaled = true
-title.TextSize = 14
-title.TextWrapped = true
-title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-title.BorderColor3 = Color3.fromRGB(27, 42, 53)
-title.BorderSizePixel = 0
-title.Size = UDim2.fromScale(1, 0.0659)
+scriptTitle.Text = "PIKA HUB"
+scriptTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+scriptTitle.TextScaled = true
+scriptTitle.TextSize = 14
+scriptTitle.TextWrapped = true
+scriptTitle.TextXAlignment = Enum.TextXAlignment.Left
+scriptTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+scriptTitle.BackgroundTransparency = 1
+scriptTitle.BorderColor3 = Color3.fromRGB(27, 42, 53)
+scriptTitle.Position = UDim2.fromScale(0.054, 0.186)
+scriptTitle.Size = UDim2.fromScale(0.508, 0.606)
+scriptTitle.Parent = top
 
-Padding(title, 0.125, 0, 0, 0.1)
+top.Parent = main
 
-local uITextSizeConstraint = Instance.new("UITextSizeConstraint")
-uITextSizeConstraint.Name = "UITextSizeConstraint"
-uITextSizeConstraint.MaxTextSize = 22
-uITextSizeConstraint.Parent = title
+local scrolling = Instance.new("ScrollingFrame")
+scrolling.Name = "Scrolling"
+scrolling.BottomImage = "rbxassetid://1195495135"
+scrolling.MidImage = "rbxassetid://1195495135"
+scrolling.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
+scrolling.ScrollBarImageTransparency = 0.5
+scrolling.ScrollBarThickness = 0
+scrolling.TopImage = "rbxassetid://1195495135"
+scrolling.BackgroundColor3 = Color3.fromRGB(33, 40, 45)
+scrolling.BorderSizePixel = 0
+scrolling.ClipsDescendants = false
+scrolling.Position = UDim2.fromScale(0, 0.2)
+scrolling.Selectable = false
+scrolling.Size = UDim2.fromScale(0.239, 0.797)
+scrolling.SelectionGroup = false
+scrolling.Parent = main
+local scrollingUIListLayout = Instance.new("UIListLayout")
+scrollingUIListLayout.Name = "UIListLayout"
+scrollingUIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+scrollingUIListLayout.Parent = scrolling
 
 local uIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
 uIAspectRatioConstraint.Name = "UIAspectRatioConstraint"
-uIAspectRatioConstraint.AspectRatio = 10.4
-uIAspectRatioConstraint.Parent = title
+uIAspectRatioConstraint.AspectRatio = 1.46
+uIAspectRatioConstraint.Parent = main
 
-title.Parent = mainFrame
+main.Parent = pikaHub
+pikaHub.Parent = CoreGui
 
-local container = Instance.new("ScrollingFrame")
-container.Name = "Container"
-container.BottomImage = "rbxassetid://5352896021"
-container.CanvasSize = UDim2.new()
-container.MidImage = "rbxassetid://5352896021"
-container.TopImage = "rbxassetid://5352896021"
-container.Active = true
-container.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
-container.BorderColor3 = Color3.fromRGB(255, 255, 255)
-container.Position = UDim2.fromScale(0, 0.0659)
-container.Size = UDim2.fromScale(1, 0.934)
-
-local uIListLayout = Instance.new("UIListLayout")
-uIListLayout.Name = "UIListLayout"
-uIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-uIListLayout.Parent = container
-
-container.CanvasSize = UDim2.fromOffset(uIListLayout.AbsoluteContentSize.X, uIListLayout.AbsoluteContentSize.Y)
-uIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    container.CanvasSize = UDim2.fromOffset(uIListLayout.AbsoluteContentSize.X, uIListLayout.AbsoluteContentSize.Y)
-end)
-
-local uIAspectRatioConstraint1 = Instance.new("UIAspectRatioConstraint")
-uIAspectRatioConstraint1.Name = "UIAspectRatioConstraint"
-uIAspectRatioConstraint1.AspectRatio = 0.732
-uIAspectRatioConstraint1.Parent = container
-
-container.Parent = mainFrame
-
-local uIAspectRatioConstraint2 = Instance.new("UIAspectRatioConstraint")
-uIAspectRatioConstraint2.Name = "UIAspectRatioConstraint"
-uIAspectRatioConstraint2.AspectRatio = 0.684
-uIAspectRatioConstraint2.Parent = mainFrame
-
-mainFrame.Parent = hubMain
-
-local Create = {};
-
-function Create.Button(Text, Callback)
-    local button = Instance.new("Frame")
-    button.Name = "Button"
-    button.BackgroundColor3 = Color3.fromRGB(35, 54, 68)
-    button.BorderColor3 = Color3.fromRGB(27, 42, 53)
-    button.BorderSizePixel = 0
-    button.Size = UDim2.new(1, 0, 0, 28)
-    FeatureText(button, Text)
-    button.Parent = container;
-    local button1 = Instance.new("TextButton")
-    button1.Name = "Button"
-    button1.Text = ""
-    button1.TextScaled = true
-    button1.TextWrapped = true
-    button1.AnchorPoint = Vector2.new(1, 0.5)
-    button1.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
-    button1.BorderColor3 = Color3.fromRGB(27, 42, 53)
-    button1.Position = UDim2.fromScale(0.93, 0.5)
-    button1.Size = UDim2.fromScale(0.116, 0.893)
-    Roundify(button1)
-    local image = Instance.new("ImageLabel")
-    image.Name = "Image"
-    image.Image = "rbxassetid://11717854254"
-    image.ScaleType = Enum.ScaleType.Fit
-    image.Active = true
-    image.AnchorPoint = Vector2.new(0.5, 0.5)
-    image.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    image.BackgroundTransparency = 1
-    image.Position = UDim2.fromScale(0.5, 0.5)
-    image.Selectable = true
-    image.Size = UDim2.fromScale(1, 1)
-    image.Parent = button1
-    local uITextSizeConstraint1 = Instance.new("UITextSizeConstraint")
-    uITextSizeConstraint1.Name = "UITextSizeConstraint"
-    uITextSizeConstraint1.MaxTextSize = 8
-    uITextSizeConstraint1.Parent = button1
-    local uIAspectRatioConstraint1 = Instance.new("UIAspectRatioConstraint")
-    uIAspectRatioConstraint1.Name = "UIAspectRatioConstraint"
-    uIAspectRatioConstraint1.AspectRatio = 1.4
-    uIAspectRatioConstraint1.Parent = button1
-    button1.Parent = button
-    local uIAspectRatioConstraint2 = Instance.new("UIAspectRatioConstraint")
-    uIAspectRatioConstraint2.Name = "UIAspectRatioConstraint"
-    uIAspectRatioConstraint2.AspectRatio = 10.8
-    uIAspectRatioConstraint2.Parent = button
-    local click;
-    if (Callback ~= nil) then
-        click = button1.MouseButton1Click:Connect(Callback)
-    end
-    return button, click;
-end
-
-function Create.Number(Text, Default, Min, Max, Callback)
-    local Default, Min, Max = (tonumber(Default) or 0), (tonumber(Min) or -math.huge), (tonumber(Max) or math.huge);
-    local info = { value = Default };
-    local number = Instance.new("Frame")
-    number.Name = "Number"
-    number.BackgroundColor3 = Color3.fromRGB(35, 54, 68)
-    number.BorderColor3 = Color3.fromRGB(27, 42, 53)
-    number.BorderSizePixel = 0
-    number.Size = UDim2.new(1, 0, 0, 28)
-    FeatureText(number, Text)
-    number.Parent = container;
-    local button = Instance.new("TextBox")
-    button.Name = "Button"
-    button.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json")
-    button.Text = tostring(Default or Min or 0)
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.TextScaled = true
-    button.TextSize = 14
-    button.TextWrapped = true
-    button.AnchorPoint = Vector2.new(1, 0.5)
-    button.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
-    button.BorderColor3 = Color3.fromRGB(27, 42, 53)
-    button.Position = UDim2.fromScale(0.93, 0.5)
-    button.Size = UDim2.fromScale(0.116, 0.893)
-    Roundify(button)
-    Padding(button, 0.2, 0.1, 0.1, 0.2)
-    local uITextSizeConstraint1 = Instance.new("UITextSizeConstraint")
-    uITextSizeConstraint1.Name = "UITextSizeConstraint"
-    uITextSizeConstraint1.MaxTextSize = 15
-    uITextSizeConstraint1.Parent = button
-    local uIAspectRatioConstraint1 = Instance.new("UIAspectRatioConstraint")
-    uIAspectRatioConstraint1.Name = "UIAspectRatioConstraint"
-    uIAspectRatioConstraint1.AspectRatio = 1.4
-    uIAspectRatioConstraint1.Parent = button
-    button.Parent = number
-    local uIAspectRatioConstraint2 = Instance.new("UIAspectRatioConstraint")
-    uIAspectRatioConstraint2.Name = "UIAspectRatioConstraint"
-    uIAspectRatioConstraint2.AspectRatio = 10.8
-    uIAspectRatioConstraint2.Parent = number
-    local lastValue = info.value;
-    local controller = button.FocusLost:Connect(function()
-        local value = tonumber(button.Text);
-        if (value ~= nil) and (value >= Min) and (value <= Max) then
-            info.value, lastValue = value, value;
-            if (Callback ~= nil) then
-                Callback(value);
-            end
-        else
-            button.Text = lastValue;
-        end
+function NewSection(Section)
+    local sectionButton = Instance.new("TextButton")
+    sectionButton.Name = "SectionButton"
+    sectionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+    sectionButton.Text = Section
+    sectionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    sectionButton.TextScaled = true
+    sectionButton.TextSize = 14
+    sectionButton.TextWrapped = true
+    sectionButton.Active = false
+    sectionButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    sectionButton.BackgroundTransparency = 0.9
+    sectionButton.BorderSizePixel = 0
+    sectionButton.Selectable = false
+    sectionButton.Size = UDim2.new(1, 0, 0, 60)
+    sectionButton.Parent = scrolling
+    scrolling.CanvasSize = UDim2.fromOffset(0, scrollingUIListLayout.AbsoluteContentSize.Y)
+    local container = Instance.new("ScrollingFrame")
+    container.Name = "Container"
+    container.BottomImage = "rbxassetid://1195495135"
+    container.MidImage = "rbxassetid://1195495135"
+    container.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
+    container.ScrollBarImageTransparency = 0.5
+    container.ScrollBarThickness = 0
+    container.TopImage = "rbxassetid://1195495135"
+    container.BackgroundColor3 = Color3.fromRGB(24, 29, 33)
+    container.BorderSizePixel = 0
+    container.ClipsDescendants = false
+    container.Position = UDim2.fromScale(0.239, 0.2)
+    container.Selectable = false
+    container.Size = UDim2.fromScale(0.761, 0.797)
+    container.SelectionGroup = false
+    local uIListLayout = Instance.new("UIListLayout")
+    uIListLayout.Name = "UIListLayout"
+    uIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    uIListLayout.Parent = container
+    uIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        container.CanvasSize = UDim2.fromOffset(0, uIListLayout.AbsoluteContentSize.Y)
     end)
-    if (Callback ~= nil) then
-        Callback(info.value);
+    sectionButton.MouseButton1Click:Connect(function()
+        for _, c in pairs(main:GetChildren()) do
+            if (c.Name == "Container") then
+                c.Visible = false;
+            end
+        end
+        container.Visible = true;
+    end)
+    container.Visible = false;
+    container.Parent = main;
+    Padding(sectionButton, 0.1, 0.1, 0.1, 0.1)
+    local Create = {}
+    function Create.Button(Text, Callback)
+        local button = Instance.new("Frame")
+        button.Name = "Button"
+        button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        button.BackgroundTransparency = 0.8
+        button.BorderSizePixel = 0
+        button.Size = UDim2.new(1, 0, 0, 50)
+        FeatureText(button, Text)
+        local button1 = Instance.new("TextButton")
+        button1.Name = "Button"
+        button1.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
+        button1.TextColor3 = Color3.fromRGB(0, 0, 0)
+        button1.TextSize = 14
+        button1.TextTransparency = 1
+        button1.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        button1.BackgroundTransparency = 0.7
+        button1.BorderSizePixel = 0
+        button1.Position = UDim2.fromScale(0.784, 0.16)
+        button1.Size = UDim2.fromScale(0.183, 0.66)
+        Roundify(button1)
+        local image = Instance.new("ImageLabel")
+        image.Name = "Image"
+        image.Image = "rbxassetid://11717854254"
+        image.ScaleType = Enum.ScaleType.Fit
+        image.AnchorPoint = Vector2.new(0.5, 0.5)
+        image.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        image.BackgroundTransparency = 1
+        image.Position = UDim2.fromScale(0.5, 0.5)
+        image.Size = UDim2.fromScale(1, 0.9)
+        image.Parent = button1
+        button1.Parent = button
+        button.Parent = container;
+        local click;
+        if (Callback ~= nil) then
+            click = button1.MouseButton1Click:Connect(Callback)
+        end
+        return button, click;
     end
-    return number, controller, info;
-end
-
-function Create.Toggle(Text, Default, Callback)
-    local info = { value = Default };
-    local toggle = Instance.new("Frame")
-    toggle.Name = "Toggle"
-    toggle.BackgroundColor3 = Color3.fromRGB(35, 54, 68)
-    toggle.BorderColor3 = Color3.fromRGB(27, 42, 53)
-    toggle.BorderSizePixel = 0
-    toggle.Size = UDim2.new(1, 0, 0, 28)
-    FeatureText(toggle, Text)
-    toggle.Parent = container;
-    local button = Instance.new("TextButton")
-    button.Name = "Button"
-    button.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
-    button.Text = ""
-    button.TextColor3 = Color3.fromRGB(0, 0, 0)
-    button.TextScaled = true
-    button.TextSize = 14
-    button.TextWrapped = true
-    button.AnchorPoint = Vector2.new(1, 0.5)
-    button.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
-    button.BorderColor3 = Color3.fromRGB(27, 42, 53)
-    button.Position = UDim2.fromScale(0.93, 0.5)
-    button.Size = UDim2.fromScale(0.116, 0.893)
-    Roundify(button)
-    local frame = Instance.new("Frame")
-    frame.Name = "Frame"
-    frame.AnchorPoint = Vector2.new(0.5, 0.5)
-    frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    frame.BorderSizePixel = 0
-    frame.Position = UDim2.fromScale(0.5, 0.5)
-    frame.Size = UDim2.fromScale(0.6, 0.6)
-    frame.Visible = (Default == true);
-    Roundify(frame)
-    frame.Parent = button
-    local uITextSizeConstraint1 = Instance.new("UITextSizeConstraint")
-    uITextSizeConstraint1.Name = "UITextSizeConstraint"
-    uITextSizeConstraint1.MaxTextSize = 14
-    uITextSizeConstraint1.Parent = button
-    local uIAspectRatioConstraint1 = Instance.new("UIAspectRatioConstraint")
-    uIAspectRatioConstraint1.Name = "UIAspectRatioConstraint"
-    uIAspectRatioConstraint1.AspectRatio = 1.4
-    uIAspectRatioConstraint1.Parent = button
-    button.Parent = toggle
-    local uIAspectRatioConstraint2 = Instance.new("UIAspectRatioConstraint")
-    uIAspectRatioConstraint2.Name = "UIAspectRatioConstraint"
-    uIAspectRatioConstraint2.AspectRatio = 10.8
-    uIAspectRatioConstraint2.Parent = toggle
-    info.value = frame.Visible;
-    local controller = button.MouseButton1Click:Connect(function()
-        frame.Visible = not frame.Visible;
-        info.value = frame.Visible;
+    function Create.Number(Text, Default, Min, Max, Callback)
+        local Default, Min, Max = (tonumber(Default) or 0), (tonumber(Min) or -math.huge), (tonumber(Max) or math.huge);
+        local info = { value = Default };
+        local number = Instance.new("Frame")
+        number.Name = "Number"
+        number.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        number.BackgroundTransparency = 0.8
+        number.BorderSizePixel = 0
+        number.Size = UDim2.new(1, 0, 0, 50)
+        FeatureText(number, Text)
+        local button = Instance.new("TextBox")
+        button.Name = "Button"
+        button.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+        button.Text = tostring(Default or Min or 0)
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        button.TextScaled = true
+        button.TextSize = 14
+        button.TextWrapped = true
+        button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        button.BackgroundTransparency = 0.7
+        button.BorderSizePixel = 0
+        button.Position = UDim2.fromScale(0.784, 0.16)
+        button.Size = UDim2.fromScale(0.183, 0.66)
+        Roundify(button)
+        Padding(button, 0.17, 0.05, 0.05, 0.17)
+        button.Parent = number
+        number.Parent = container;
+        local lastValue = info.value;
+        local controller = button.FocusLost:Connect(function()
+            local value = tonumber(button.Text);
+            if (value ~= nil) and (value >= Min) and (value <= Max) then
+                info.value, lastValue = value, value;
+                if (Callback ~= nil) then
+                    Callback(value);
+                end
+            else
+                button.Text = lastValue;
+            end
+        end)
         if (Callback ~= nil) then
             Callback(info.value);
         end
-    end)
-    if (Callback ~= nil) then
-        Callback(info.value);
+        return info, number, controller;
     end
-    return toggle, controller, info;
+    function Create.Toggle(Text, Default, Callback)
+        local info = { value = Default };
+        local toggle = Instance.new("Frame")
+        toggle.Name = "Toggle"
+        toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        toggle.BackgroundTransparency = 0.8
+        toggle.BorderSizePixel = 0
+        toggle.Size = UDim2.new(1, 0, 0, 50)
+        FeatureText(toggle, Text)
+        local button = Instance.new("TextButton")
+        button.Name = "Button"
+        button.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
+        button.Text = ""
+        button.TextColor3 = Color3.fromRGB(0, 0, 0)
+        button.TextSize = 14
+        button.TextTransparency = 1
+        button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        button.BackgroundTransparency = 0.7
+        button.BorderSizePixel = 0
+        button.Position = UDim2.fromScale(0.784, 0.16)
+        button.Size = UDim2.fromScale(0.183, 0.66)
+        Roundify(button)
+        local frame = Instance.new("Frame")
+        frame.Name = "Frame"
+        frame.AnchorPoint = Vector2.new(0, 0.5)
+        frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        frame.BackgroundTransparency = 0.5
+        frame.BorderSizePixel = 0
+        frame.Position = UDim2.fromScale(0, 0.5)
+        frame.Size = UDim2.fromScale(0.5, 1)
+        Roundify(frame)
+        frame.Parent = button
+        button.Parent = toggle
+        toggle.Parent = container;
+        local function NewValue(value)
+            frame.Position = (value and UDim2.fromScale(0.5, 0.5) or UDim2.fromScale(0, 0.5))
+            frame.BackgroundColor3 = (value and Color3.new(0, 1, 0) or Color3.new(1, 0, 0))
+            info.value = value;
+            if (Callback ~= nil) then
+                Callback(info.value);
+            end
+        end
+        NewValue(Default)
+        local controller = button.MouseButton1Click:Connect(function()
+            NewValue(not info.value)
+        end)
+        return info, toggle, controller;
+    end
+    return Create, container;
 end
 
-local _, _, speedInfo = Create.Toggle("Speedhack", false)
-local _, _, speedSpeedInfo = Create.Number("Dash Speed (ms)", 60, 60, 120)
-local _, _, jumpInfo = Create.Number("Jump Strength", 100, 0, 600)
-Create.Button("Super Jump", function()
+local Universal, MC = NewSection("Universal")
+local speedInfo = Universal.Toggle("Speedhack", false)
+local speedSpeedInfo = Universal.Number("Dash Speed (ms)", 120, 60, 120)
+local jumpInfo = Universal.Number("Jump Strength", 100, 0, 600)
+Universal.Button("Super Jump", function()
     Player.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, jumpInfo.value, 0)
 end)
+Universal.Button("Unnamed ESP", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Unnamed%20ESP%20Edit.lua", true))()
+end)
+MC.Visible = true;
+local Redwood = NewSection("Redwood Prison: Reworked")
+local CurrentWinded, WindedRespawned;
+Redwood.Toggle("Disable Mountain Wind", false, function(value)
+    if (WindedRespawned) then WindedRespawned:Disconnect() end
+    if (value) then
+        local function NoWinded(c)
+            if (CurrentWinded) then CurrentWinded:Disconnect() end
+            CurrentWinded = c.ChildAdded:Connect(function(i)
+                if (i:IsA("Folder")) and (i.Name == "Winded") then
+                    task.wait(1)
+                    i:Destroy()
+                end
+            end)
+            if (c:FindFirstChild("Winded")) and (c.Winded:IsA("Folder")) then
+                c.Winded:Destroy()
+            end
+        end
+        WindedRespawned = Player.CharacterAdded:Connect(NoWinded)
+        if (Player.Character) then
+            NoWinded(Player.Character)
+        end
+    else
+        if (CurrentWinded) then CurrentWinded:Disconnect() end
+        if (WindedRespawned) then WindedRespawned:Disconnect() end
+    end
+end)
+local Deepwoken = NewSection("Deepwoken")
 local modcheck;
-Create.Toggle("Mod Check", false, function(value)
+Deepwoken.Toggle("Mod Check", false, function(value)
     if (value) then
         Notify("Mod Check", "Checking for moderators, please stand by...", 5)
         modcheck = Players.PlayerAdded:Connect(function(p)
@@ -363,10 +379,7 @@ Create.Toggle("Mod Check", false, function(value)
         end
     end
 end)
-Create.Button("Unnamed ESP", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Unnamed%20Deepwoken%20ESP%20Edit.lua", true))()
-end)
-Create.Toggle("Custom Voices", false, function(value)
+Deepwoken.Toggle("Custom Voices", false, function(value)
     if (value) then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/DeepwokenVoices.lua", true))()
     else
@@ -378,8 +391,18 @@ Create.Toggle("Custom Voices", false, function(value)
         end
     end
 end)
-local _, _, spectateInfo = Create.Toggle("Leaderboard Spectate", false)
-local function NewSpectate(frame)
+local LeaderboardRespawn;
+local spectateInfo = Deepwoken.Toggle("Leaderboard Spectate", false, function(value)
+    if (value) then
+        if (not LeaderboardRespawn) then
+            if (Player:FindFirstChild("PlayerGui")) and (Player.PlayerGui:FindFirstChild("LeaderboardGui")) then
+                NewLeaderboard()
+            end
+            NewLeaderboard = Player.CharacterAdded:Connect(NewLeaderboard)
+        end
+    end
+end)
+function NewSpectate(frame)
     if (frame:IsA("Frame")) then
         frame.InputBegan:Connect(function(input, gpe)
             if (not spectateInfo.value) then return end
@@ -410,16 +433,12 @@ local function NewSpectate(frame)
         end)
     end
 end
-local function NewLeaderboard()
+function NewLeaderboard()
     Player.PlayerGui.LeaderboardGui.MainFrame.ScrollingFrame.ChildAdded:Connect(NewSpectate)
     for _, f in pairs(Player.PlayerGui.LeaderboardGui.MainFrame.ScrollingFrame:GetChildren()) do
         NewSpectate(f)
     end
 end
-if (Player:FindFirstChild("PlayerGui")) and (Player.PlayerGui:FindFirstChild("LeaderboardGui")) then
-    NewLeaderboard()
-end
-Player.CharacterAdded:Connect(NewLeaderboard)
 
 local function TEclone(part, dt)
     local clone = Instance.new("Part")
@@ -480,15 +499,20 @@ end)
 local visibilityController = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
     if (gameProcessedEvent) then return end
     if (input.KeyCode == Enum.KeyCode.End) then
-        mainFrame.Visible = not mainFrame.Visible;
+        main.Visible = not main.Visible;
     end
 end)
 
-shared.WokenHubDisconnect = function()
-    if (CoreGui:FindFirstChild("PIKAWOKENHUB")) then
-        CoreGui.PIKAWOKENHUB:Destroy()
-    end
+shared.PikaHubDisconnect = function()
+	for _, c in pairs(CoreGui:GetChildren()) do
+        if (c:IsA("ScreenGui")) and (c.Name == pikaHub.Name) then
+            c:Destroy()
+        end
+	end
     visibilityController:Disconnect();
     speedController:Disconnect();
     speedDash:Disconnect();
+    if (CurrentWinded) then CurrentWinded:Disconnect() end
+    if (WindedRespawned) then WindedRespawned:Disconnect() end
+    if (modcheck) then modcheck:Disconnect() end
 end
