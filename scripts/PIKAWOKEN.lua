@@ -324,15 +324,41 @@ Universal.Button("Super Jump", function()
 	Player.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, jumpInfo.value, 0)
 end)
 local ActiveAimbot = nil;
+local aimbotInfo = Universal.Toggle("Aimbot", false, function(value)
+	if (not value) and (ActiveAimbot) then
+		ActiveAimbot:Disconnect()
+	end
+end)
+local aimbotIgnoreTeam = Universal.Toggle("Ignore Team", true)
+local aimbotLegit = Universal.Toggle("Legit Measure", false)
+local aimbotSmoothingInfo = Universal.Number("Smoothing (1-10)", 3, 1, 10)
+local function CreateViewExample(sp)
+    local sg = Instance.new("ScreenGui")
+    local frame = Instance.new("Frame")
+    frame.Rotation = 45
+    frame.AnchorPoint = Vector2.new(0.5, 0.5)
+    frame.BorderSizePixel = 0
+    frame.Size = UDim2.fromOffset(5, 5)
+    frame.Position = UDim2.fromOffset(sp.X, sp.Y)
+    frame.Parent = sg
+    sg.Parent = CoreGui
+    Debris:AddItem(sg, 1)
+end
 local function GetClosestToScreenPoint(ScreenPoint)
-	local Closest, Target = 120, nil;
+	local Closest, Target = 90, nil;
 	for _, e in pairs(Player.Character.Parent:GetChildren()) do
 		if (e == Player.Character) then continue end
 		local hum: Humanoid = e:FindFirstChildWhichIsA("Humanoid");
 		local head: BasePart = e:FindFirstChild("Head");
+        if (aimbotIgnoreTeam.value) then
+            local player = Players:GetPlayerFromCharacter(e);
+            if (player ~= nil) and (Player.Team == player.Team) then
+                continue
+            end
+        end
 		if (hum ~= nil) and (head ~= nil) and (hum.Health > 0) then
 			local Point, OnScreen = Camera:WorldToScreenPoint(head.Position);
-			local Distance = (Vector2.new(Point.X, Mouse.Y) - ScreenPoint).Magnitude;
+			local Distance = (Vector2.new(Point.X, Point.Y) - ScreenPoint).Magnitude;
 			if (OnScreen) and ((not Closest) or (Closest and Distance < Closest)) then
 				Closest, Target = Distance, e;
 			end
@@ -340,12 +366,6 @@ local function GetClosestToScreenPoint(ScreenPoint)
 	end
 	return Target;
 end
-local aimbotInfo = Universal.Toggle("Aimbot", false, function(value)
-	if (not value) and (ActiveAimbot) then
-		ActiveAimbot:Disconnect()
-	end
-end)
-local aimbotSmoothingInfo = Universal.Number("Smoothing (1-10)", 3, 1, 10)
 Universal.Button("Unnamed ESP", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Unnamed%20ESP%20Edit.lua", true))()
 end)
@@ -613,7 +633,7 @@ local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
 	if (gpe) then return end
 	if (input.KeyCode == Enum.KeyCode.End) then
 		main.Visible = not main.Visible;
-	elseif (input.UserInputType == Enum.UserInputType.MouseButton2) then
+	elseif (input.UserInputType == Enum.UserInputType.MouseButton2) and (aimbotInfo.value) then
 		local OffsetTimer, Offset, AimName = 0, Vector3.new(), "Head";
 		ActiveAimbot = RunService.Heartbeat:Connect(function(dt)
 			local AimEntity = GetClosestToScreenPoint(Vector2.new(Mouse.X, Mouse.Y));
@@ -626,7 +646,11 @@ local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
 			OffsetTimer -= dt;
 			if (OffsetTimer <= 0) then
 				AimName = (math.random(1, 4) == 1) and "Torso" or "Head";
-				Offset = Vector3.new(math.random(-5, 5)/10, math.random(-5, 5)/10, math.random(-5, 5)/10)
+                if (aimbotLegit.value) then
+				    Offset = Vector3.new(math.random(-5, 5)/10, math.random(-5, 5)/10, math.random(-5, 5)/10)
+                else
+                    Offset = Vector3.new(0, 0.1, 0)
+                end
 				OffsetTimer = math.random(5, 30)/100;
 			end
 		end)
