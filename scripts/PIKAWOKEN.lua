@@ -70,6 +70,8 @@ main.BorderColor3 = Color3.fromRGB(13, 16, 21)
 main.BorderSizePixel = 3
 main.Position = UDim2.fromScale(0.0211, 0.576)
 main.Size = UDim2.fromScale(0.46, 0.394)
+main.Active = true
+main.Draggable = true
 
 local top = Instance.new("Frame")
 top.Name = "Top"
@@ -353,6 +355,14 @@ Redwood.Toggle("Disable Mountain Wind", false, function(value)
 end)
 local Deepwoken = NewSection("Deepwoken")
 local modcheck;
+local GroupInfo = GroupService:GetGroupInfoAsync(5212858);
+local function GetRoleInfoFromRank(Rank)
+    for _, info in pairs(GroupInfo.Roles) do
+        if (info.Rank == Rank) then
+            return info;
+        end
+    end
+end
 Deepwoken.Toggle("Mod Check", false, function(value)
     if (value) then
         Notify("Mod Check", "Checking for moderators, please stand by...", 5)
@@ -366,7 +376,11 @@ Deepwoken.Toggle("Mod Check", false, function(value)
         for _, p in pairs(Players:GetPlayers()) do
             local Rank = p:GetRankInGroup(5212858);
             if (Rank) and (Rank >= 1) then
-                Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank()), 5)
+                xpcall(function()
+                    Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank()), 5)
+                end, function(a)
+                    
+                end)
                 found = true;
             end
         end
