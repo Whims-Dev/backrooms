@@ -115,7 +115,6 @@ scrolling.ScrollBarThickness = 0
 scrolling.TopImage = "rbxassetid://1195495135"
 scrolling.BackgroundColor3 = Color3.fromRGB(33, 40, 45)
 scrolling.BorderSizePixel = 0
-scrolling.ClipsDescendants = false
 scrolling.Position = UDim2.fromScale(0, 0.2)
 scrolling.Selectable = false
 scrolling.Size = UDim2.fromScale(0.239, 0.797)
@@ -161,7 +160,6 @@ function NewSection(Section)
 	container.TopImage = "rbxassetid://1195495135"
 	container.BackgroundColor3 = Color3.fromRGB(24, 29, 33)
 	container.BorderSizePixel = 0
-	container.ClipsDescendants = false
 	container.Position = UDim2.fromScale(0.239, 0.2)
 	container.Selectable = false
 	container.Size = UDim2.fromScale(0.761, 0.797)
@@ -438,7 +436,6 @@ Deepwoken.Toggle("Sanity Check", false, function(value)
 		sanityMeter.Name = "SanityMeter"
 		sanityMeter.Active = true
 		sanityMeter.AlwaysOnTop = true
-		sanityMeter.ClipsDescendants = true
 		sanityMeter.LightInfluence = 1
 		sanityMeter.Size = UDim2.fromScale(0.3, 6)
 		sanityMeter.StudsOffset = Vector3.new(3, 0, 0)
