@@ -318,7 +318,7 @@ end
 
 local Universal, MC = NewSection("Universal")
 local speedInfo = Universal.Toggle("Speedhack", false)
-local speedSpeedInfo = Universal.Number("Dash Speed (ms)", 120, 60, 120)
+local speedSpeedInfo = Universal.Number("Dash Speed (ms)", 60, 60, 120)
 local jumpInfo = Universal.Number("Jump Strength", 100, 0, 600)
 Universal.Button("Super Jump", function()
     Player.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, jumpInfo.value, 0)
@@ -402,6 +402,83 @@ Deepwoken.Toggle("Custom Voices", false, function(value)
         end
         if (shared.CharacterAddedDsounds) then
             shared.CharacterAddedDsounds:Disconnect()
+        end
+    end
+end)
+local sanityMeter, parryOverlayChanged, parryRespawned;
+Deepwoken.Toggle("Sanity Check", false, function(value)
+    if (value) then
+        if (sanityMeter) then sanityMeter:Destroy() end
+        sanityMeter = Instance.new("BillboardGui")
+        sanityMeter.Name = "SanityMeter"
+        sanityMeter.Active = true
+        sanityMeter.AlwaysOnTop = true
+        sanityMeter.ClipsDescendants = true
+        sanityMeter.LightInfluence = 1
+        sanityMeter.Size = UDim2.fromScale(0.3, 6)
+        sanityMeter.StudsOffset = Vector3.new(3, 0, 0)
+        sanityMeter.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        local sanity = Instance.new("Frame")
+        sanity.Name = "Sanity"
+        sanity.AnchorPoint = Vector2.new(0.5, 0.5)
+        sanity.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
+        sanity.BorderColor3 = Color3.fromRGB(27, 42, 53)
+        sanity.BorderSizePixel = 0
+        sanity.BackgroundTransparency = 1
+        sanity.Position = UDim2.fromScale(0.5, 0.5)
+        sanity.Size = UDim2.fromScale(1, 1)
+        Roundify(sanity)
+        local fill = Instance.new("Frame")
+        fill.Name = "Fill"
+        fill.AnchorPoint = Vector2.new(0, 1)
+        fill.BackgroundColor3 = Color3.fromRGB(73, 73, 255)
+        fill.BorderColor3 = Color3.fromRGB(27, 42, 53)
+        fill.BorderSizePixel = 0
+        fill.BackgroundTransparency = 1
+        fill.Position = UDim2.fromScale(0, 1)
+        fill.Size = UDim2.fromScale(1, 0.5)
+        Roundify(fill)
+        fill.Parent = sanity
+        sanity.Parent = sanityMeter
+        sanityMeter.Parent = CoreGui;
+        local TweenOut0, TweenOut1;
+        local function NewCharacter()
+            if (parryOverlayChanged) then parryOverlayChanged:Disconnect() end
+            if (Player.PlayerGui:FindFirstChild("StatsGui")) then
+                local visibleTimer = 0;
+                local Indicator = Player.PlayerGui.StatsGui.CombatStats.Indicators.Parry;
+                parryOverlayChanged = Indicator.Changed:Connect(function()
+                    if (Indicator.ImageTransparency > 0.1) then
+                        if (visibleTimer <= 0) then
+                            visibleTimer = 3;
+                            if (TweenOut0) then TweenOut0:Pause() end
+                            if (TweenOut1) then TweenOut1:Pause() end
+                            sanity.BackgroundTransparency = 0
+                            fill.BackgroundTransparency = 0
+                            sanityMeter.Adornee = Player.Character.HumanoidRootPart
+                            pcall(function()
+                                repeat
+                                    fill.Size = UDim2.fromScale(1, Player.Character.Sanity.Value/Player.Character.Sanity.MaxValue)
+                                    visibleTimer -= task.wait(0.1)
+                                until visibleTimer <= 0;
+                            end)
+                            TweenOut0 = TweenService:Create(sanity, TweenInfo.new(2), {BackgroundTransparency=1})
+                            TweenOut1 = TweenService:Create(fill, TweenInfo.new(2), {BackgroundTransparency=1})
+                            TweenOut0:Play()
+                            TweenOut1:Play()
+                        else
+                            visibleTimer = 3;
+                        end
+                    end
+                end)
+            end
+        end
+        parryRespawned = Player.CharacterAdded:Connect(NewCharacter)
+        NewCharacter()
+    else
+        if (sanityMeter) then
+            sanityMeter:Destroy()
+            sanityMeter = nil;
         end
     end
 end)
@@ -529,4 +606,7 @@ shared.PikaHubDisconnect = function()
     if (CurrentWinded) then CurrentWinded:Disconnect() end
     if (WindedRespawned) then WindedRespawned:Disconnect() end
     if (modcheck) then modcheck:Disconnect() end
+    if (parryOverlayChanged) then parryOverlayChanged:Disconnect() end
+    if (parryRespawned) then parryRespawned:Disconnect() end
+    if (sanityMeter) then sanityMeter:Destroy() end
 end
