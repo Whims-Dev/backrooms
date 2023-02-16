@@ -11,50 +11,52 @@ local TweenService = game:GetService("TweenService")
 local CoreGui = game.CoreGui;
 
 local Player = Players.LocalPlayer;
+local Mouse = Player:GetMouse()
+local Camera = workspace.CurrentCamera;
 
 local function Notify(Title, Text, Duration)
-    StarterGui:SetCore("SendNotification", {Title=Title, Text=Text, Duration=(Duration or 5), Button1="OK"})
+	StarterGui:SetCore("SendNotification", {Title=Title, Text=Text, Duration=(Duration or 5), Button1="OK"})
 end
 
 if (shared.PikaHubDisconnect) then
-    shared.PikaHubDisconnect();
+	shared.PikaHubDisconnect();
 end
 
 local function Padding(parent, bottom, left, right, top)
-    local uIPadding = Instance.new("UIPadding")
-    uIPadding.Name = "UIPadding"
-    uIPadding.PaddingBottom = UDim.new(bottom or 0, 0)
-    uIPadding.PaddingLeft = UDim.new(left or 0, 0)
-    uIPadding.PaddingRight = UDim.new(right or 0, 0)
-    uIPadding.PaddingTop = UDim.new(top or 0, 0)
-    uIPadding.Parent = parent
-    return uIPadding;
+	local uIPadding = Instance.new("UIPadding")
+	uIPadding.Name = "UIPadding"
+	uIPadding.PaddingBottom = UDim.new(bottom or 0, 0)
+	uIPadding.PaddingLeft = UDim.new(left or 0, 0)
+	uIPadding.PaddingRight = UDim.new(right or 0, 0)
+	uIPadding.PaddingTop = UDim.new(top or 0, 0)
+	uIPadding.Parent = parent
+	return uIPadding;
 end
 
 local function FeatureText(parent, text)
-    local feature = Instance.new("TextLabel")
-    feature.Name = "Feature"
-    feature.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
-    feature.Text = text
-    feature.TextColor3 = Color3.fromRGB(255, 255, 255)
-    feature.TextScaled = true
-    feature.TextSize = 14
-    feature.TextWrapped = true
-    feature.TextXAlignment = Enum.TextXAlignment.Left
-    feature.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    feature.BackgroundTransparency = 1
-    feature.Position = UDim2.fromScale(0.0381, 0.26)
-    feature.Size = UDim2.fromScale(0.708, 0.46)
-    feature.Parent = parent;
-    return feature;
+	local feature = Instance.new("TextLabel")
+	feature.Name = "Feature"
+	feature.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+	feature.Text = text
+	feature.TextColor3 = Color3.fromRGB(255, 255, 255)
+	feature.TextScaled = true
+	feature.TextSize = 14
+	feature.TextWrapped = true
+	feature.TextXAlignment = Enum.TextXAlignment.Left
+	feature.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	feature.BackgroundTransparency = 1
+	feature.Position = UDim2.fromScale(0.0381, 0.26)
+	feature.Size = UDim2.fromScale(0.708, 0.46)
+	feature.Parent = parent;
+	return feature;
 end
 
 local function Roundify(parent)
-    local uICorner = Instance.new("UICorner")
-    uICorner.Name = "UICorner"
-    uICorner.CornerRadius = UDim.new(0.5, 0)
-    uICorner.Parent = parent
-    return uICorner;
+	local uICorner = Instance.new("UICorner")
+	uICorner.Name = "UICorner"
+	uICorner.CornerRadius = UDim.new(0.5, 0)
+	uICorner.Parent = parent
+	return uICorner;
 end
 
 local pikaHub = Instance.new("ScreenGui")
@@ -84,9 +86,9 @@ top.Size = UDim2.fromScale(1, 0.2)
 local scriptTitle = Instance.new("TextLabel")
 scriptTitle.Name = "ScriptTitle"
 scriptTitle.FontFace = Font.new(
-  "rbxasset://fonts/families/GothamSSm.json",
-  Enum.FontWeight.Heavy,
-  Enum.FontStyle.Normal
+	"rbxasset://fonts/families/GothamSSm.json",
+	Enum.FontWeight.Heavy,
+	Enum.FontStyle.Normal
 )
 scriptTitle.Text = "PIKA HUB"
 scriptTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -133,187 +135,187 @@ main.Parent = pikaHub
 pikaHub.Parent = CoreGui
 
 function NewSection(Section)
-    local sectionButton = Instance.new("TextButton")
-    sectionButton.Name = "SectionButton"
-    sectionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-    sectionButton.Text = Section
-    sectionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    sectionButton.TextScaled = true
-    sectionButton.TextSize = 14
-    sectionButton.TextWrapped = true
-    sectionButton.Active = false
-    sectionButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    sectionButton.BackgroundTransparency = 0.9
-    sectionButton.BorderSizePixel = 0
-    sectionButton.Selectable = false
-    sectionButton.Size = UDim2.new(1, 0, 0, 60)
-    sectionButton.Parent = scrolling
-    scrolling.CanvasSize = UDim2.fromOffset(0, scrollingUIListLayout.AbsoluteContentSize.Y)
-    local container = Instance.new("ScrollingFrame")
-    container.Name = "Container"
-    container.BottomImage = "rbxassetid://1195495135"
-    container.MidImage = "rbxassetid://1195495135"
-    container.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
-    container.ScrollBarImageTransparency = 0.5
-    container.ScrollBarThickness = 0
-    container.TopImage = "rbxassetid://1195495135"
-    container.BackgroundColor3 = Color3.fromRGB(24, 29, 33)
-    container.BorderSizePixel = 0
-    container.ClipsDescendants = false
-    container.Position = UDim2.fromScale(0.239, 0.2)
-    container.Selectable = false
-    container.Size = UDim2.fromScale(0.761, 0.797)
-    container.SelectionGroup = false
-    local uIListLayout = Instance.new("UIListLayout")
-    uIListLayout.Name = "UIListLayout"
-    uIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    uIListLayout.Parent = container
-    uIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        container.CanvasSize = UDim2.fromOffset(0, uIListLayout.AbsoluteContentSize.Y)
-    end)
-    sectionButton.MouseButton1Click:Connect(function()
-        for _, c in pairs(main:GetChildren()) do
-            if (c.Name == "Container") then
-                c.Visible = false;
-            end
-        end
-        container.Visible = true;
-    end)
-    container.Visible = false;
-    container.Parent = main;
-    Padding(sectionButton, 0.1, 0.1, 0.1, 0.1)
-    local Create = {}
-    function Create.Button(Text, Callback)
-        local button = Instance.new("Frame")
-        button.Name = "Button"
-        button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        button.BackgroundTransparency = 0.8
-        button.BorderSizePixel = 0
-        button.Size = UDim2.new(1, 0, 0, 50)
-        FeatureText(button, Text)
-        local button1 = Instance.new("TextButton")
-        button1.Name = "Button"
-        button1.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
-        button1.TextColor3 = Color3.fromRGB(0, 0, 0)
-        button1.TextSize = 14
-        button1.TextTransparency = 1
-        button1.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        button1.BackgroundTransparency = 0.7
-        button1.BorderSizePixel = 0
-        button1.Position = UDim2.fromScale(0.784, 0.16)
-        button1.Size = UDim2.fromScale(0.183, 0.66)
-        Roundify(button1)
-        local image = Instance.new("ImageLabel")
-        image.Name = "Image"
-        image.Image = "rbxassetid://11717854254"
-        image.ScaleType = Enum.ScaleType.Fit
-        image.AnchorPoint = Vector2.new(0.5, 0.5)
-        image.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        image.BackgroundTransparency = 1
-        image.Position = UDim2.fromScale(0.5, 0.5)
-        image.Size = UDim2.fromScale(1, 0.9)
-        image.Parent = button1
-        button1.Parent = button
-        button.Parent = container;
-        local click;
-        if (Callback ~= nil) then
-            click = button1.MouseButton1Click:Connect(Callback)
-        end
-        return button, click;
-    end
-    function Create.Number(Text, Default, Min, Max, Callback)
-        local Default, Min, Max = (tonumber(Default) or 0), (tonumber(Min) or -math.huge), (tonumber(Max) or math.huge);
-        local info = { value = Default };
-        local number = Instance.new("Frame")
-        number.Name = "Number"
-        number.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        number.BackgroundTransparency = 0.8
-        number.BorderSizePixel = 0
-        number.Size = UDim2.new(1, 0, 0, 50)
-        FeatureText(number, Text)
-        local button = Instance.new("TextBox")
-        button.Name = "Button"
-        button.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
-        button.Text = tostring(Default or Min or 0)
-        button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        button.TextScaled = true
-        button.TextSize = 14
-        button.TextWrapped = true
-        button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        button.BackgroundTransparency = 0.7
-        button.BorderSizePixel = 0
-        button.Position = UDim2.fromScale(0.784, 0.16)
-        button.Size = UDim2.fromScale(0.183, 0.66)
-        Roundify(button)
-        Padding(button, 0.17, 0.05, 0.05, 0.17)
-        button.Parent = number
-        number.Parent = container;
-        local lastValue = info.value;
-        local controller = button.FocusLost:Connect(function()
-            local value = tonumber(button.Text);
-            if (value ~= nil) and (value >= Min) and (value <= Max) then
-                info.value, lastValue = value, value;
-                if (Callback ~= nil) then
-                    Callback(value);
-                end
-            else
-                button.Text = lastValue;
-            end
-        end)
-        if (Callback ~= nil) then
-            Callback(info.value);
-        end
-        return info, number, controller;
-    end
-    function Create.Toggle(Text, Default, Callback)
-        local info = { value = Default };
-        local toggle = Instance.new("Frame")
-        toggle.Name = "Toggle"
-        toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        toggle.BackgroundTransparency = 0.8
-        toggle.BorderSizePixel = 0
-        toggle.Size = UDim2.new(1, 0, 0, 50)
-        FeatureText(toggle, Text)
-        local button = Instance.new("TextButton")
-        button.Name = "Button"
-        button.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
-        button.Text = ""
-        button.TextColor3 = Color3.fromRGB(0, 0, 0)
-        button.TextSize = 14
-        button.TextTransparency = 1
-        button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        button.BackgroundTransparency = 0.7
-        button.BorderSizePixel = 0
-        button.Position = UDim2.fromScale(0.784, 0.16)
-        button.Size = UDim2.fromScale(0.183, 0.66)
-        Roundify(button)
-        local frame = Instance.new("Frame")
-        frame.Name = "Frame"
-        frame.AnchorPoint = Vector2.new(0, 0.5)
-        frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-        frame.BackgroundTransparency = 0.5
-        frame.BorderSizePixel = 0
-        frame.Position = UDim2.fromScale(0, 0.5)
-        frame.Size = UDim2.fromScale(0.5, 1)
-        Roundify(frame)
-        frame.Parent = button
-        button.Parent = toggle
-        toggle.Parent = container;
-        local function NewValue(value)
-            frame.Position = (value and UDim2.fromScale(0.5, 0.5) or UDim2.fromScale(0, 0.5))
-            frame.BackgroundColor3 = (value and Color3.new(0, 1, 0) or Color3.new(1, 0, 0))
-            info.value = value;
-            if (Callback ~= nil) then
-                Callback(info.value);
-            end
-        end
-        NewValue(Default)
-        local controller = button.MouseButton1Click:Connect(function()
-            NewValue(not info.value)
-        end)
-        return info, toggle, controller;
-    end
-    return Create, container;
+	local sectionButton = Instance.new("TextButton")
+	sectionButton.Name = "SectionButton"
+	sectionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	sectionButton.Text = Section
+	sectionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	sectionButton.TextScaled = true
+	sectionButton.TextSize = 14
+	sectionButton.TextWrapped = true
+	sectionButton.Active = false
+	sectionButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	sectionButton.BackgroundTransparency = 0.9
+	sectionButton.BorderSizePixel = 0
+	sectionButton.Selectable = false
+	sectionButton.Size = UDim2.new(1, 0, 0, 60)
+	sectionButton.Parent = scrolling
+	scrolling.CanvasSize = UDim2.fromOffset(0, scrollingUIListLayout.AbsoluteContentSize.Y)
+	local container = Instance.new("ScrollingFrame")
+	container.Name = "Container"
+	container.BottomImage = "rbxassetid://1195495135"
+	container.MidImage = "rbxassetid://1195495135"
+	container.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
+	container.ScrollBarImageTransparency = 0.5
+	container.ScrollBarThickness = 0
+	container.TopImage = "rbxassetid://1195495135"
+	container.BackgroundColor3 = Color3.fromRGB(24, 29, 33)
+	container.BorderSizePixel = 0
+	container.ClipsDescendants = false
+	container.Position = UDim2.fromScale(0.239, 0.2)
+	container.Selectable = false
+	container.Size = UDim2.fromScale(0.761, 0.797)
+	container.SelectionGroup = false
+	local uIListLayout = Instance.new("UIListLayout")
+	uIListLayout.Name = "UIListLayout"
+	uIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	uIListLayout.Parent = container
+	uIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		container.CanvasSize = UDim2.fromOffset(0, uIListLayout.AbsoluteContentSize.Y)
+	end)
+	sectionButton.MouseButton1Click:Connect(function()
+		for _, c in pairs(main:GetChildren()) do
+			if (c.Name == "Container") then
+				c.Visible = false;
+			end
+		end
+		container.Visible = true;
+	end)
+	container.Visible = false;
+	container.Parent = main;
+	Padding(sectionButton, 0.1, 0.1, 0.1, 0.1)
+	local Create = {}
+	function Create.Button(Text, Callback)
+		local button = Instance.new("Frame")
+		button.Name = "Button"
+		button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		button.BackgroundTransparency = 0.8
+		button.BorderSizePixel = 0
+		button.Size = UDim2.new(1, 0, 0, 50)
+		FeatureText(button, Text)
+		local button1 = Instance.new("TextButton")
+		button1.Name = "Button"
+		button1.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
+		button1.TextColor3 = Color3.fromRGB(0, 0, 0)
+		button1.TextSize = 14
+		button1.TextTransparency = 1
+		button1.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		button1.BackgroundTransparency = 0.7
+		button1.BorderSizePixel = 0
+		button1.Position = UDim2.fromScale(0.784, 0.16)
+		button1.Size = UDim2.fromScale(0.183, 0.66)
+		Roundify(button1)
+		local image = Instance.new("ImageLabel")
+		image.Name = "Image"
+		image.Image = "rbxassetid://11717854254"
+		image.ScaleType = Enum.ScaleType.Fit
+		image.AnchorPoint = Vector2.new(0.5, 0.5)
+		image.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		image.BackgroundTransparency = 1
+		image.Position = UDim2.fromScale(0.5, 0.5)
+		image.Size = UDim2.fromScale(1, 0.9)
+		image.Parent = button1
+		button1.Parent = button
+		button.Parent = container;
+		local click;
+		if (Callback ~= nil) then
+			click = button1.MouseButton1Click:Connect(Callback)
+		end
+		return button, click;
+	end
+	function Create.Number(Text, Default, Min, Max, Callback)
+		local Default, Min, Max = (tonumber(Default) or 0), (tonumber(Min) or -math.huge), (tonumber(Max) or math.huge);
+		local info = { value = Default };
+		local number = Instance.new("Frame")
+		number.Name = "Number"
+		number.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		number.BackgroundTransparency = 0.8
+		number.BorderSizePixel = 0
+		number.Size = UDim2.new(1, 0, 0, 50)
+		FeatureText(number, Text)
+		local button = Instance.new("TextBox")
+		button.Name = "Button"
+		button.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+		button.Text = tostring(Default or Min or 0)
+		button.TextColor3 = Color3.fromRGB(255, 255, 255)
+		button.TextScaled = true
+		button.TextSize = 14
+		button.TextWrapped = true
+		button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		button.BackgroundTransparency = 0.7
+		button.BorderSizePixel = 0
+		button.Position = UDim2.fromScale(0.784, 0.16)
+		button.Size = UDim2.fromScale(0.183, 0.66)
+		Roundify(button)
+		Padding(button, 0.17, 0.05, 0.05, 0.17)
+		button.Parent = number
+		number.Parent = container;
+		local lastValue = info.value;
+		local controller = button.FocusLost:Connect(function()
+			local value = tonumber(button.Text);
+			if (value ~= nil) and (value >= Min) and (value <= Max) then
+				info.value, lastValue = value, value;
+				if (Callback ~= nil) then
+					Callback(value);
+				end
+			else
+				button.Text = lastValue;
+			end
+		end)
+		if (Callback ~= nil) then
+			Callback(info.value);
+		end
+		return info, number, controller;
+	end
+	function Create.Toggle(Text, Default, Callback)
+		local info = { value = Default };
+		local toggle = Instance.new("Frame")
+		toggle.Name = "Toggle"
+		toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		toggle.BackgroundTransparency = 0.8
+		toggle.BorderSizePixel = 0
+		toggle.Size = UDim2.new(1, 0, 0, 50)
+		FeatureText(toggle, Text)
+		local button = Instance.new("TextButton")
+		button.Name = "Button"
+		button.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
+		button.Text = ""
+		button.TextColor3 = Color3.fromRGB(0, 0, 0)
+		button.TextSize = 14
+		button.TextTransparency = 1
+		button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		button.BackgroundTransparency = 0.7
+		button.BorderSizePixel = 0
+		button.Position = UDim2.fromScale(0.784, 0.16)
+		button.Size = UDim2.fromScale(0.183, 0.66)
+		Roundify(button)
+		local frame = Instance.new("Frame")
+		frame.Name = "Frame"
+		frame.AnchorPoint = Vector2.new(0, 0.5)
+		frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+		frame.BackgroundTransparency = 0.5
+		frame.BorderSizePixel = 0
+		frame.Position = UDim2.fromScale(0, 0.5)
+		frame.Size = UDim2.fromScale(0.5, 1)
+		Roundify(frame)
+		frame.Parent = button
+		button.Parent = toggle
+		toggle.Parent = container;
+		local function NewValue(value)
+			frame.Position = (value and UDim2.fromScale(0.5, 0.5) or UDim2.fromScale(0, 0.5))
+			frame.BackgroundColor3 = (value and Color3.new(0, 1, 0) or Color3.new(1, 0, 0))
+			info.value = value;
+			if (Callback ~= nil) then
+				Callback(info.value);
+			end
+		end
+		NewValue(Default)
+		local controller = button.MouseButton1Click:Connect(function()
+			NewValue(not info.value)
+		end)
+		return info, toggle, controller;
+	end
+	return Create, container;
 end
 
 local Universal, MC = NewSection("Universal")
@@ -321,292 +323,342 @@ local speedInfo = Universal.Toggle("Speedhack", false)
 local speedSpeedInfo = Universal.Number("Dash Speed (ms)", 60, 60, 120)
 local jumpInfo = Universal.Number("Jump Strength", 100, 0, 600)
 Universal.Button("Super Jump", function()
-    Player.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, jumpInfo.value, 0)
+	Player.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, jumpInfo.value, 0)
 end)
+local ActiveAimbot = nil;
+local function GetClosestToScreenPoint(ScreenPoint)
+	local Closest, Target = 120, nil;
+	for _, e in pairs(Player.Character.Parent:GetChildren()) do
+		if (e == Player.Character) then continue end
+		local hum: Humanoid = e:FindFirstChildWhichIsA("Humanoid");
+		local head: BasePart = e:FindFirstChild("Head");
+		if (hum ~= nil) and (head ~= nil) and (hum.Health > 0) then
+			local Point, OnScreen = Camera:WorldToScreenPoint(head.Position);
+			local Distance = (Vector2.new(Point.X, Mouse.Y) - ScreenPoint).Magnitude;
+			if (OnScreen) and ((not Closest) or (Closest and Distance < Closest)) then
+				Closest, Target = Distance, e;
+			end
+		end
+	end
+	return Target;
+end
+local aimbotInfo = Universal.Toggle("Aimbot", false, function(value)
+	if (not value) and (ActiveAimbot) then
+		ActiveAimbot:Disconnect()
+	end
+end)
+local aimbotSmoothingInfo = Universal.Number("Smoothing (1-10)", 3, 1, 10)
 Universal.Button("Unnamed ESP", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Unnamed%20ESP%20Edit.lua", true))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Unnamed%20ESP%20Edit.lua", true))()
 end)
 MC.Visible = true;
 local Redwood = NewSection("Redwood Prison: Reworked")
 local CurrentWinded, WindedRespawned;
 Redwood.Toggle("Disable Mountain Wind", false, function(value)
-    if (WindedRespawned) then WindedRespawned:Disconnect() end
-    if (value) then
-        local function NoWinded(c)
-            if (CurrentWinded) then CurrentWinded:Disconnect() end
-            CurrentWinded = c.ChildAdded:Connect(function(i)
-                if (i:IsA("Folder")) and (i.Name == "Winded") then
-                    task.wait(1)
-                    i:Destroy()
-                end
-            end)
-            if (c:FindFirstChild("Winded")) and (c.Winded:IsA("Folder")) then
-                c.Winded:Destroy()
-            end
-        end
-        WindedRespawned = Player.CharacterAdded:Connect(NoWinded)
-        if (Player.Character) then
-            NoWinded(Player.Character)
-        end
-    else
-        if (CurrentWinded) then CurrentWinded:Disconnect() end
-        if (WindedRespawned) then WindedRespawned:Disconnect() end
-    end
+	if (WindedRespawned) then WindedRespawned:Disconnect() end
+	if (value) then
+		local function NoWinded(c)
+			if (CurrentWinded) then CurrentWinded:Disconnect() end
+			CurrentWinded = c.ChildAdded:Connect(function(i)
+				if (i:IsA("Folder")) and (i.Name == "Winded") then
+					task.wait(1)
+					i:Destroy()
+				end
+			end)
+			if (c:FindFirstChild("Winded")) and (c.Winded:IsA("Folder")) then
+				c.Winded:Destroy()
+			end
+		end
+		WindedRespawned = Player.CharacterAdded:Connect(NoWinded)
+		if (Player.Character) then
+			NoWinded(Player.Character)
+		end
+	else
+		if (CurrentWinded) then CurrentWinded:Disconnect() end
+		if (WindedRespawned) then WindedRespawned:Disconnect() end
+	end
 end)
 local Deepwoken = NewSection("Deepwoken")
 local modcheck;
 local GroupInfo = GroupService:GetGroupInfoAsync(5212858);
 local function GetRoleInfoFromRank(Rank)
-    for _, info in pairs(GroupInfo.Roles) do
-        if (info.Rank == Rank) then
-            return info;
-        end
-    end
+	for _, info in pairs(GroupInfo.Roles) do
+		if (info.Rank == Rank) then
+			return info;
+		end
+	end
 end
 Deepwoken.Toggle("Mod Check", false, function(value)
-    if (value) then
-        Notify("Mod Check", "Checking for moderators, please stand by...", 5)
-        modcheck = Players.PlayerAdded:Connect(function(p)
-            local Rank = p:GetRankInGroup(5212858);
-            if (Rank) and (Rank >= 1) then
-                Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank()), 5)
-            end
-        end)
-        local found = false;
-        for _, p in pairs(Players:GetPlayers()) do
-            local Rank = p:GetRankInGroup(5212858);
-            if (Rank) and (Rank >= 1) then
-                xpcall(function()
-                    Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank()), 5)
-                end, function(a)
-                    
-                end)
-                found = true;
-            end
-        end
-        if (not found) then
-            Notify("Mod Check", "All clear!", 5)
-        end
-    else
-        if (modcheck ~= nil) then
-            modcheck:Disconnect()
-        end
-    end
+	if (value) then
+		Notify("Mod Check", "Checking for moderators, please stand by...", 5)
+		modcheck = Players.PlayerAdded:Connect(function(p)
+			local Rank = p:GetRankInGroup(5212858);
+			if (Rank) and (Rank >= 1) then
+				Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank()), 5)
+			end
+		end)
+		local found = false;
+		for _, p in pairs(Players:GetPlayers()) do
+			local Rank = p:GetRankInGroup(5212858);
+			if (Rank) and (Rank >= 1) then
+				xpcall(function()
+					Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank()), 5)
+				end, function(a)
+
+				end)
+				found = true;
+			end
+		end
+		if (not found) then
+			Notify("Mod Check", "All clear!", 5)
+		end
+	else
+		if (modcheck ~= nil) then
+			modcheck:Disconnect()
+		end
+	end
 end)
 Deepwoken.Toggle("Custom Voices", false, function(value)
-    if (value) then
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/DeepwokenVoices.lua", true))()
-    else
-        if (shared.PlayerAddedDsounds) then
-            shared.PlayerAddedDsounds:Disconnect()
-        end
-        if (shared.CharacterAddedDsounds) then
-            shared.CharacterAddedDsounds:Disconnect()
-        end
-    end
+	if (value) then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/DeepwokenVoices.lua", true))()
+	else
+		if (shared.PlayerAddedDsounds) then
+			shared.PlayerAddedDsounds:Disconnect()
+		end
+		if (shared.CharacterAddedDsounds) then
+			shared.CharacterAddedDsounds:Disconnect()
+		end
+	end
 end)
 local sanityMeter, parryOverlayChanged, parryRespawned;
 Deepwoken.Toggle("Sanity Check", false, function(value)
-    if (value) then
-        if (sanityMeter) then sanityMeter:Destroy() end
-        sanityMeter = Instance.new("BillboardGui")
-        sanityMeter.Name = "SanityMeter"
-        sanityMeter.Active = true
-        sanityMeter.AlwaysOnTop = true
-        sanityMeter.ClipsDescendants = true
-        sanityMeter.LightInfluence = 1
-        sanityMeter.Size = UDim2.fromScale(0.3, 6)
-        sanityMeter.StudsOffset = Vector3.new(3, 0, 0)
-        sanityMeter.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-        local sanity = Instance.new("Frame")
-        sanity.Name = "Sanity"
-        sanity.AnchorPoint = Vector2.new(0.5, 0.5)
-        sanity.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
-        sanity.BorderColor3 = Color3.fromRGB(27, 42, 53)
-        sanity.BorderSizePixel = 0
-        sanity.BackgroundTransparency = 1
-        sanity.Position = UDim2.fromScale(0.5, 0.5)
-        sanity.Size = UDim2.fromScale(1, 1)
-        Roundify(sanity)
-        local fill = Instance.new("Frame")
-        fill.Name = "Fill"
-        fill.AnchorPoint = Vector2.new(0, 1)
-        fill.BackgroundColor3 = Color3.fromRGB(73, 73, 255)
-        fill.BorderColor3 = Color3.fromRGB(27, 42, 53)
-        fill.BorderSizePixel = 0
-        fill.BackgroundTransparency = 1
-        fill.Position = UDim2.fromScale(0, 1)
-        fill.Size = UDim2.fromScale(1, 0.5)
-        Roundify(fill)
-        fill.Parent = sanity
-        sanity.Parent = sanityMeter
-        sanityMeter.Parent = CoreGui;
-        local TweenOut0, TweenOut1;
-        local function NewCharacter()
-            if (parryOverlayChanged) then parryOverlayChanged:Disconnect() end
-            if (Player.PlayerGui:FindFirstChild("StatsGui")) then
-                local visibleTimer = 0;
-                local Indicator = Player.PlayerGui.StatsGui.CombatStats.Indicators.Parry;
-                parryOverlayChanged = Indicator.Changed:Connect(function()
-                    if (Indicator.ImageTransparency > 0.1) then
-                        if (visibleTimer <= 0) then
-                            visibleTimer = 3;
-                            if (TweenOut0) then TweenOut0:Pause() end
-                            if (TweenOut1) then TweenOut1:Pause() end
-                            sanity.BackgroundTransparency = 0
-                            fill.BackgroundTransparency = 0
-                            sanityMeter.Adornee = Player.Character.HumanoidRootPart
-                            pcall(function()
-                                repeat
-                                    fill.Size = UDim2.fromScale(1, Player.Character.Sanity.Value/Player.Character.Sanity.MaxValue)
-                                    visibleTimer -= task.wait(0.1)
-                                until visibleTimer <= 0;
-                            end)
-                            TweenOut0 = TweenService:Create(sanity, TweenInfo.new(2), {BackgroundTransparency=1})
-                            TweenOut1 = TweenService:Create(fill, TweenInfo.new(2), {BackgroundTransparency=1})
-                            TweenOut0:Play()
-                            TweenOut1:Play()
-                        else
-                            visibleTimer = 3;
-                        end
-                    end
-                end)
-            end
-        end
-        parryRespawned = Player.CharacterAdded:Connect(NewCharacter)
-        NewCharacter()
-    else
-        if (sanityMeter) then
-            sanityMeter:Destroy()
-            sanityMeter = nil;
-        end
-    end
+	if (value) then
+		if (sanityMeter) then sanityMeter:Destroy() end
+		sanityMeter = Instance.new("BillboardGui")
+		sanityMeter.Name = "SanityMeter"
+		sanityMeter.Active = true
+		sanityMeter.AlwaysOnTop = true
+		sanityMeter.ClipsDescendants = true
+		sanityMeter.LightInfluence = 1
+		sanityMeter.Size = UDim2.fromScale(0.3, 6)
+		sanityMeter.StudsOffset = Vector3.new(3, 0, 0)
+		sanityMeter.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+		local sanity = Instance.new("Frame")
+		sanity.Name = "Sanity"
+		sanity.AnchorPoint = Vector2.new(0.5, 0.5)
+		sanity.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
+		sanity.BorderColor3 = Color3.fromRGB(27, 42, 53)
+		sanity.BorderSizePixel = 0
+		sanity.BackgroundTransparency = 1
+		sanity.Position = UDim2.fromScale(0.5, 0.5)
+		sanity.Size = UDim2.fromScale(1, 1)
+		Roundify(sanity)
+		local fill = Instance.new("Frame")
+		fill.Name = "Fill"
+		fill.AnchorPoint = Vector2.new(0, 1)
+		fill.BackgroundColor3 = Color3.fromRGB(73, 73, 255)
+		fill.BorderColor3 = Color3.fromRGB(27, 42, 53)
+		fill.BorderSizePixel = 0
+		fill.BackgroundTransparency = 1
+		fill.Position = UDim2.fromScale(0, 1)
+		fill.Size = UDim2.fromScale(1, 0.5)
+		Roundify(fill)
+		fill.Parent = sanity
+		sanity.Parent = sanityMeter
+		sanityMeter.Parent = CoreGui;
+		local TweenOut0, TweenOut1;
+		local function NewCharacter()
+			if (parryOverlayChanged) then parryOverlayChanged:Disconnect() end
+			if (Player.PlayerGui:FindFirstChild("StatsGui")) then
+				local visibleTimer = 0;
+				local Indicator = Player.PlayerGui.StatsGui.CombatStats.Indicators.Parry;
+				parryOverlayChanged = Indicator.Changed:Connect(function()
+					if (Indicator.ImageTransparency > 0.1) then
+						if (visibleTimer <= 0) then
+							visibleTimer = 3;
+							if (TweenOut0) then TweenOut0:Pause() end
+							if (TweenOut1) then TweenOut1:Pause() end
+							sanity.BackgroundTransparency = 0
+							fill.BackgroundTransparency = 0
+							sanityMeter.Adornee = Player.Character.HumanoidRootPart
+							pcall(function()
+								repeat
+									fill.Size = UDim2.fromScale(1, Player.Character.Sanity.Value/Player.Character.Sanity.MaxValue)
+									visibleTimer -= task.wait(0.1)
+								until visibleTimer <= 0;
+							end)
+							TweenOut0 = TweenService:Create(sanity, TweenInfo.new(2), {BackgroundTransparency=1})
+							TweenOut1 = TweenService:Create(fill, TweenInfo.new(2), {BackgroundTransparency=1})
+							TweenOut0:Play()
+							TweenOut1:Play()
+						else
+							visibleTimer = 3;
+						end
+					end
+				end)
+			end
+		end
+		parryRespawned = Player.CharacterAdded:Connect(NewCharacter)
+		NewCharacter()
+	else
+		if (sanityMeter) then
+			sanityMeter:Destroy()
+			sanityMeter = nil;
+		end
+	end
 end)
 local LeaderboardRespawn;
 local spectateInfo = Deepwoken.Toggle("Leaderboard Spectate", false, function(value)
-    if (value) then
-        if (not LeaderboardRespawn) then
-            if (Player:FindFirstChild("PlayerGui")) and (Player.PlayerGui:FindFirstChild("LeaderboardGui")) then
-                NewLeaderboard()
-            end
-            NewLeaderboard = Player.CharacterAdded:Connect(NewLeaderboard)
-        end
-    end
+	if (value) then
+		if (not LeaderboardRespawn) then
+			if (Player:FindFirstChild("PlayerGui")) and (Player.PlayerGui:FindFirstChild("LeaderboardGui")) then
+				NewLeaderboard()
+			end
+			LeaderboardRespawn = Player.CharacterAdded:Connect(NewLeaderboard)
+		end
+	end
 end)
 function NewSpectate(frame)
-    if (frame:IsA("Frame")) then
-        frame.InputBegan:Connect(function(input, gpe)
-            if (not spectateInfo.value) then return end
-            if (gpe) then return end
-            if (input.UserInputType == Enum.UserInputType.MouseButton1) then
-                local plr = Players:FindFirstChild(frame.Player.Text);
-                if (plr ~= nil) then
-                    local character = plr.Character;
-                    if (character == nil) then return end
-                    local humanoid = character:FindFirstChild("Humanoid")
-                    if (humanoid == nil) then return end
-                    if (workspace.CurrentCamera.CameraSubject == humanoid) then
-                        workspace.CurrentCamera.CameraSubject = Player.Character.Humanoid
-                    else
-                        workspace.CurrentCamera.CameraSubject = humanoid;
-                    end
-                end
-            end
-        end)
-        frame.Player.Changed:Connect(function()
-            if (not spectateInfo.value) then return end
-            local plr = Players:FindFirstChild(frame.Player.Text);
-            if (plr ~= nil) then
-                frame.Player.TextColor3 = Color3.new(1, 0, 0)
-            else
-                frame.Player.TextColor3 = Color3.new(1, 1, 1)
-            end
-        end)
-    end
+	if (frame:IsA("Frame")) then
+		frame.InputBegan:Connect(function(input, gpe)
+			if (not spectateInfo.value) then return end
+			if (gpe) then return end
+			if (input.UserInputType == Enum.UserInputType.MouseButton1) then
+				local plr = Players:FindFirstChild(frame.Player.Text);
+				if (plr ~= nil) then
+					local character = plr.Character;
+					if (character == nil) then return end
+					local humanoid = character:FindFirstChild("Humanoid")
+					if (humanoid == nil) then return end
+					if (Camera.CameraSubject == humanoid) then
+						Camera.CameraSubject = Player.Character.Humanoid
+					else
+						Camera.CameraSubject = humanoid;
+					end
+				end
+			end
+		end)
+		frame.Player.Changed:Connect(function()
+			if (not spectateInfo.value) then return end
+			local plr = Players:FindFirstChild(frame.Player.Text);
+			if (plr ~= nil) then
+				frame.Player.TextColor3 = Color3.new(1, 0, 0)
+			else
+				frame.Player.TextColor3 = Color3.new(1, 1, 1)
+			end
+		end)
+	end
 end
 function NewLeaderboard()
-    Player.PlayerGui.LeaderboardGui.MainFrame.ScrollingFrame.ChildAdded:Connect(NewSpectate)
-    for _, f in pairs(Player.PlayerGui.LeaderboardGui.MainFrame.ScrollingFrame:GetChildren()) do
-        NewSpectate(f)
-    end
+	Player.PlayerGui.LeaderboardGui.MainFrame.ScrollingFrame.ChildAdded:Connect(NewSpectate)
+	for _, f in pairs(Player.PlayerGui.LeaderboardGui.MainFrame.ScrollingFrame:GetChildren()) do
+		NewSpectate(f)
+	end
 end
 
 local function TEclone(part, dt)
-    local clone = Instance.new("Part")
-    clone.Size = part.Size;
-    clone.Anchored = true
-    clone.CanCollide = false
-    clone.CFrame = part.CFrame;
-    clone.Color = (_G.tpcolor or part.Color);
-    clone.Transparency = 0.5;
-    clone.Material = Enum.Material.Neon
-    coroutine.wrap(function()
-        task.wait(dt)
-        clone.Parent = workspace.CurrentCamera;
-        Debris:AddItem(clone, 1)
-        TweenService:Create(clone, TweenInfo.new(1), {
-            Transparency = 1,
-            CFrame = CFrame.new(clone.Position) * CFrame.Angles(math.rad(math.random(-180, 180)), math.rad(math.random(-180, 180)), math.rad(math.random(-180, 180))),
-            Size = Vector3.new(0, 0, math.random(0, 5))
-        }):Play()
-    end)()
+	local clone = Instance.new("Part")
+	clone.Size = part.Size;
+	clone.Anchored = true
+	clone.CanCollide = false
+	clone.CFrame = part.CFrame;
+	clone.Color = (_G.tpcolor or part.Color);
+	clone.Transparency = 0.5;
+	clone.Material = Enum.Material.Neon
+	coroutine.wrap(function()
+		task.wait(dt)
+		clone.Parent = Camera;
+		Debris:AddItem(clone, 1)
+		TweenService:Create(clone, TweenInfo.new(1), {
+			Transparency = 1,
+			CFrame = CFrame.new(clone.Position) * CFrame.Angles(math.rad(math.random(-180, 180)), math.rad(math.random(-180, 180)), math.rad(math.random(-180, 180))),
+			Size = Vector3.new(0, 0, math.random(0, 5))
+		}):Play()
+	end)()
 end
 
 local speedController = RunService.Stepped:Connect(function()
-    if (not speedInfo.value) then return end
-    local char = Player.Character;
-    if (not char) then return end
-    local root = char:FindFirstChild("HumanoidRootPart")
-    if (root ~= nil) then
-         local newvel = root.AssemblyLinearVelocity/45;
-         root.CFrame += Vector3.new(newvel.X, 0, newvel.Z)
-    end
+	if (not speedInfo.value) then return end
+	local char = Player.Character;
+	if (not char) then return end
+	local root = char:FindFirstChild("HumanoidRootPart")
+	if (root ~= nil) then
+		local newvel = root.AssemblyLinearVelocity/45;
+		root.CFrame += Vector3.new(newvel.X, 0, newvel.Z)
+	end
 end)
 
 local lastTP = tick();
 local speedDash = RunService.RenderStepped:Connect(function(dt)
-    if (not speedInfo.value) then return end
-    local now = tick();
-    if (UserInputService:IsKeyDown(Enum.KeyCode.V)) and (not UserInputService:GetFocusedTextBox()) and ((now - lastTP) > speedSpeedInfo.value/1000) then
-        lastTP = now;
-        local root = Player.Character:FindFirstChild("HumanoidRootPart")
-        root.CFrame += root.CFrame.LookVector * 10;
-        local sound = Instance.new("Sound");
-        sound.SoundId = "rbxassetid://3763437293";
-        sound.Volume = 1;
-        sound.TimePosition = 0.815;
-        sound.Parent = root;
-        sound:Play()
-        Debris:AddItem(sound, 1);
-        for _, name in pairs({"Head", "Left Arm", "Right Arm", "Left Leg", "Right Leg", "Torso"}) do
-            local part = Player.Character:FindFirstChild(name);
-            if (part ~= nil) then
-                TEclone(part, dt)
-            end
-        end
-    end
+	if (not speedInfo.value) then return end
+	local now = tick();
+	if (UserInputService:IsKeyDown(Enum.KeyCode.V)) and (not UserInputService:GetFocusedTextBox()) and ((now - lastTP) > speedSpeedInfo.value/1000) then
+		lastTP = now;
+		local root = Player.Character:FindFirstChild("HumanoidRootPart")
+		root.CFrame += root.CFrame.LookVector * 10;
+		local sound = Instance.new("Sound");
+		sound.SoundId = "rbxassetid://3763437293";
+		sound.Volume = 1;
+		sound.TimePosition = 0.815;
+		sound.Parent = root;
+		sound:Play()
+		Debris:AddItem(sound, 1);
+		for _, name in pairs({"Head", "Left Arm", "Right Arm", "Left Leg", "Right Leg", "Torso"}) do
+			local part = Player.Character:FindFirstChild(name);
+			if (part ~= nil) then
+				TEclone(part, dt)
+			end
+		end
+	end
 end)
 
-local visibilityController = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-    if (gameProcessedEvent) then return end
-    if (input.KeyCode == Enum.KeyCode.End) then
-        main.Visible = not main.Visible;
-    end
+local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
+	if (gpe) then return end
+	if (input.KeyCode == Enum.KeyCode.End) then
+		main.Visible = not main.Visible;
+	elseif (input.UserInputType == Enum.UserInputType.MouseButton2) then
+		local OffsetTimer, Offset, AimName = 0, Vector3.new(), "Head";
+		ActiveAimbot = RunService.Heartbeat:Connect(function(dt)
+			local AimEntity = GetClosestToScreenPoint(Vector2.new(Mouse.X, Mouse.Y));
+			if (AimEntity ~= nil) then
+				local AimPart = AimEntity:FindFirstChild(AimName) or AimEntity:FindFirstChild("Head") or AimEntity:FindFirstChild("Torso");
+				if (AimPart ~= nil) then
+					Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, AimPart.Position + Offset), aimbotSmoothingInfo.value/10)
+				end
+			end
+			OffsetTimer -= dt;
+			if (OffsetTimer <= 0) then
+				AimName = (math.random(1, 4) == 1) and "Torso" or "Head";
+				Offset = Vector3.new(math.random(-5, 5)/10, math.random(-5, 5)/10, math.random(-5, 5)/10)
+				OffsetTimer = math.random(5, 30)/100;
+			end
+		end)
+	end
+end)
+
+local InputEnded = UserInputService.InputEnded:Connect(function(input)
+	if (input.UserInputType == Enum.UserInputType.MouseButton2) then
+		if (ActiveAimbot) then
+			ActiveAimbot:Disconnect()
+		end
+	end
 end)
 
 shared.PikaHubDisconnect = function()
 	for _, c in pairs(CoreGui:GetChildren()) do
-        if (c:IsA("ScreenGui")) and (c.Name == pikaHub.Name) then
-            c:Destroy()
-        end
+		if (c:IsA("ScreenGui")) and (c.Name == pikaHub.Name) then
+			c:Destroy()
+		end
 	end
-    visibilityController:Disconnect();
-    speedController:Disconnect();
-    speedDash:Disconnect();
-    if (CurrentWinded) then CurrentWinded:Disconnect() end
-    if (WindedRespawned) then WindedRespawned:Disconnect() end
-    if (modcheck) then modcheck:Disconnect() end
-    if (parryOverlayChanged) then parryOverlayChanged:Disconnect() end
-    if (parryRespawned) then parryRespawned:Disconnect() end
-    if (sanityMeter) then sanityMeter:Destroy() end
+	InputBegan:Disconnect();
+	InputEnded:Disconnect();
+	speedController:Disconnect();
+	speedDash:Disconnect();
+	if (CurrentWinded) then CurrentWinded:Disconnect() end
+	if (WindedRespawned) then WindedRespawned:Disconnect() end
+	if (modcheck) then modcheck:Disconnect() end
+	if (parryOverlayChanged) then parryOverlayChanged:Disconnect() end
+	if (parryRespawned) then parryRespawned:Disconnect() end
+	if (ActiveAimbot) then ActiveAimbot:Disconnect() end
+	if (sanityMeter) then sanityMeter:Destroy() end
 end
