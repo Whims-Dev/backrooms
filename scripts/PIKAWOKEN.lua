@@ -417,15 +417,15 @@ Deepwoken.Toggle("Mod Check", false, function(value)
 		end)
 		local found = false;
 		for _, p in pairs(Players:GetPlayers()) do
-			local Rank = p:GetRankInGroup(5212858);
-			if (Rank) and (Rank >= 1) then
-				xpcall(function()
+			xpcall(function()
+				local Rank = p:GetRankInGroup(5212858);
+				if (Rank) and (Rank >= 1) then
 					Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank()), 5)
-				end, function(a)
-
-				end)
-				found = true;
-			end
+					found = true;
+				end
+			end, function(a)
+				Notify("Mod Alert", string.format("Error when trying to retrieve %s (%s)'s information!\n%s", p.Name, p.UserId, a), 5)
+			end)
 		end
 		if (not found) then
 			Notify("Mod Check", "All clear!", 5)
