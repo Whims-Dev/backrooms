@@ -369,6 +369,21 @@ end
 Universal.Button("Unnamed ESP", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Unnamed%20ESP%20Edit.lua", true))()
 end)
+local SavedCFrame, SavedCamera;
+Universal.Button("Save Current Position", function()
+	xpcall(function()
+		SavedCFrame, SavedCamera = Player.Character.HumanoidRootPart.CFrame, Camera.CFrame;
+	end, function()
+		Notify("Error", "You either have not loaded in or this game does not use the default character.", 5)
+	end)
+end)
+Universal.Button("Goto Saved Position", function()
+	if (not SavedCFrame) then
+		Notify("Error", "You don't have a saved position set.", 5)
+	else
+		Player.Character.HumanoidRootPart.CFrame, Camera.CFrame = SavedCFrame, SavedCamera;
+	end
+end)
 MC.Visible = true;
 local Redwood = NewSection("Redwood Prison: Reworked")
 local CurrentWinded, WindedRespawned;
