@@ -417,7 +417,7 @@ local GroupInfo = GroupService:GetGroupInfoAsync(5212858);
 local function GetRoleInfoFromRank(Rank)
 	for _, info in pairs(GroupInfo.Roles) do
 		if (info.Rank == Rank) then
-			return info;
+			return info.Name;
 		end
 	end
 end
