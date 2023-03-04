@@ -323,6 +323,24 @@ local jumpInfo = Universal.Number("Jump Strength", 100, 0, 600)
 Universal.Button("Super Jump", function()
 	Player.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, jumpInfo.value, 0)
 end)
+local Noclippy = nil;
+Universal.Toggle("Noclip", false, function(value)
+	if (value) then
+		Noclippy = RunService.Stepped:Connect(function()
+			local Character = Player.Character;
+			if (Character == nil) then return end
+			for _, p in pairs(Character:GetDescendants()) do
+				if (p:IsA("BasePart")) and (p.CanCollide) then
+					p.CanCollide = false
+				end
+			end
+		end)
+	else
+		if (Noclippy) then
+			Noclippy:Disconnect()
+		end
+	end
+end)
 local ActiveAimbot = nil;
 local aimbotInfo = Universal.Toggle("Aimbot", false, function(value)
 	if (not value) and (ActiveAimbot) then
@@ -708,4 +726,5 @@ shared.PikaHubDisconnect = function()
 	if (sanityMeter) then sanityMeter:Destroy() end
 	if (shared.flyinput) then shared.flyinput:Disconnect() end
 	if (shared.FlyHandler) then shared.FlyHandler:Disconnect() end
+	if (Noclippy) then Noclippy:Disconnect() end
 end
