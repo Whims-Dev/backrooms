@@ -479,6 +479,14 @@ Deepwoken.Toggle("Mod Check", false, function(value)
 		end
 	end
 end)
+Deepwoken.Toggle("Fly", false, function(value)
+	if (value) then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/VelocityBasedFly.lua", true))()
+	else
+		if (shared.flyinput) then shared.flyinput:Disconnect() end
+		if (shared.FlyHandler) then shared.FlyHandler:Disconnect() end
+	end
+end)
 local NoFallDamage = Deepwoken.Toggle("No Fall Damage", false);
 local call; call = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
 	local args = {...};
@@ -491,14 +499,6 @@ local call; call = hookmetamethod(game, "__namecall", newcclosure(function(self,
 	end
 	return call(self, ...);
 end))
-Deepwoken.Toggle("Fly", false, function(value)
-	if (value) then
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/VelocityBasedFly.lua", true))()
-	else
-		if (shared.flyinput) then shared.flyinput:Disconnect() end
-		if (shared.FlyHandler) then shared.FlyHandler:Disconnect() end
-	end
-end)
 Deepwoken.Toggle("Custom Voices", false, function(value)
 	if (value) then
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/DeepwokenVoices.lua", true))()
