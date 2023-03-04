@@ -38,6 +38,10 @@ shared.flyinput = UserInputService.InputBegan:Connect(function(input, gpe)
                 if (Character == nil) then return end
                 local Torso = Character:FindFirstChild("HumanoidRootPart");
                 if (Torso == nil) then return end
+                local Humanoid = Character:FindFirstChildWhichIsA("Humanoid");
+                if (Humanoid ~= nil) then
+                    Humanoid.PlatformStand = false
+                end
                 local Control = { F = 0, B = 0, L = 0, R = 0 }
                 for k, v in pairs(FlyDirections) do
                     if (UserInputService:IsKeyDown(k)) then
