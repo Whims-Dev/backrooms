@@ -340,12 +340,14 @@ Universal.Toggle("Noclip", false, function(value)
 			Noclippy:Disconnect()
 		end
 		local Character = Player.Character;
-		if (Character:FindFirstChild("UpperTorso")) then
-			Character.UpperTorso.CanCollide = true
-			Character.Head.CanCollide = true
-		else
-			Character.Torso.CanCollide = true
-			Character.Head.CanCollide = true
+		if (Character ~= nil) then
+			if (Character:FindFirstChild("UpperTorso")) then
+				Character.UpperTorso.CanCollide = true
+				Character.Head.CanCollide = true
+			else
+				Character.Torso.CanCollide = true
+				Character.Head.CanCollide = true
+			end
 		end
 	end
 end)
@@ -477,7 +479,18 @@ Deepwoken.Toggle("Mod Check", false, function(value)
 		end
 	end
 end)
-
+local NoFallDamage = Deepwoken.Toggle("No Fall Damage", false);
+local call; call = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
+	local args = {...};
+	if (checkcaller()) then return call(self, ...); end
+	local method = getnamecallmethod();
+	if (method == 'FireServer') and (NoFallDamage.value) and (typeof(args[1]) == "number") then
+		return;
+	elseif (method == "FindFirstChild") and (args[1] == "BodyVelocity") then
+		return;
+	end
+	return call(self, ...);
+end))
 Deepwoken.Toggle("Fly", false, function(value)
 	if (value) then
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/VelocityBasedFly.lua", true))()
