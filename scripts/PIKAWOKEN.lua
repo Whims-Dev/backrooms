@@ -339,6 +339,14 @@ Universal.Toggle("Noclip", false, function(value)
 		if (Noclippy) then
 			Noclippy:Disconnect()
 		end
+		local Character = Player.Character;
+		if (Character:FindFirstChild("UpperTorso")) then
+			Character.UpperTorso.CanCollide = true
+			Character.Head.CanCollide = true
+		else
+			Character.Torso.CanCollide = true
+			Character.Head.CanCollide = true
+		end
 	end
 end)
 local ActiveAimbot = nil;
