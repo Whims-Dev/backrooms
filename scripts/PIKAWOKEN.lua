@@ -451,6 +451,15 @@ Deepwoken.Toggle("Mod Check", false, function(value)
 		end
 	end
 end)
+
+Deepwoken.Toggle("Fly", false, function(value)
+	if (value) then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/VelocityBasedFly.lua", true))()
+	else
+		if (shared.flyinput) then shared.flyinput:Disconnect() end
+		if (shared.FlyHandler) then shared.FlyHandler:Disconnect() end
+	end
+end)
 Deepwoken.Toggle("Custom Voices", false, function(value)
 	if (value) then
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/DeepwokenVoices.lua", true))()
@@ -697,4 +706,6 @@ shared.PikaHubDisconnect = function()
 	if (parryRespawned) then parryRespawned:Disconnect() end
 	if (ActiveAimbot) then ActiveAimbot:Disconnect() end
 	if (sanityMeter) then sanityMeter:Destroy() end
+	if (shared.flyinput) then shared.flyinput:Disconnect() end
+	if (shared.FlyHandler) then shared.FlyHandler:Disconnect() end
 end
