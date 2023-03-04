@@ -39,7 +39,8 @@ shared.flyinput = UserInputService.InputBegan:Connect(function(input, gpe)
                 local Torso = Character:FindFirstChild("HumanoidRootPart");
                 if (Torso == nil) then return end
                 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid");
-                if (Humanoid ~= nil) then
+                if (Humanoid ~= nil) and (Humanoid.PlatformStand) then
+                    print("I'M TRYING BRO")
                     Humanoid.PlatformStand = false
                 end
                 local Control = { F = 0, B = 0, L = 0, R = 0 }
