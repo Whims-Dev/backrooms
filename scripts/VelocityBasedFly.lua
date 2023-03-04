@@ -14,7 +14,6 @@ local Mouse = Player:GetMouse()
 local Camera = workspace.CurrentCamera;
 
 local Flying = false;
-local FlyHandler = nil;
 local FlyDirections = {
     [Enum.KeyCode.W] = { "F", 1 },
     [Enum.KeyCode.S] = { "B", -1 },
@@ -24,16 +23,17 @@ local FlyDirections = {
 local LastControl = { F = 0, B = 0, L = 0, R = 0 }; 
 local FlySpeed, MaxFlySpeed = 50, 200;
 
-UserInputService.InputBegan:Connect(function(input, gpe)
+if (shared.flyinput) then shared.flyinput:Disconnect() end
+shared.flyinput = UserInputService.InputBegan:Connect(function(input, gpe)
     if (gpe) then return end
     if (input.KeyCode == Enum.KeyCode.F2) then
         Flying = not Flying;
         if (not Flying) then
             LastControl = { F = 0, B = 0, L = 0, R = 0 }
-            FlyHandler:Disconnect()
+            shared.FlyHandler:Disconnect()
         else
             FlySpeed = 50;
-            FlyHandler = RunService.RenderStepped:Connect(function()
+            shared.FlyHandler = RunService.RenderStepped:Connect(function()
                 local Character = Player.Character;
                 if (Character == nil) then return end
                 local Torso = Character:FindFirstChild("HumanoidRootPart");
