@@ -445,7 +445,7 @@ local GroupInfo = GroupService:GetGroupInfoAsync(5212858);
 local function GetRoleInfoFromRank(Rank)
 	for _, info in pairs(GroupInfo.Roles) do
 		if (info.Rank == Rank) then
-			return info.Name;
+			return info;
 		end
 	end
 end
@@ -455,7 +455,7 @@ Deepwoken.Toggle("Mod Check", false, function(value)
 		modcheck = Players.PlayerAdded:Connect(function(p)
 			local Rank = p:GetRankInGroup(5212858);
 			if (Rank) and (Rank >= 1) then
-				Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank()), 5)
+				Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank(Rank).Name), math.huge)
 			end
 		end)
 		local found = false;
@@ -463,11 +463,11 @@ Deepwoken.Toggle("Mod Check", false, function(value)
 			xpcall(function()
 				local Rank = p:GetRankInGroup(5212858);
 				if (Rank) and (Rank >= 1) then
-					Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank()), 5)
+					Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank(Rank).Name), math.huge)
 					found = true;
 				end
 			end, function(a)
-				Notify("Mod Alert", string.format("Error when trying to retrieve %s (%s)'s information!\n%s", p.Name, p.UserId, a), 5)
+				Notify("Mod Alert", string.format("Error with %s (%s)...\n%s", p.Name, p.UserId, a), 5)
 			end)
 		end
 		if (not found) then
