@@ -449,6 +449,9 @@ local function GetRoleInfoFromRank(Rank)
 		end
 	end
 end
+Deepwoken.Button("Respawn", function()
+	Player.Character.Head:Destroy()
+end)
 Deepwoken.Toggle("Mod Check", false, function(value)
 	if (value) then
 		Notify("Mod Check", "Checking for moderators, please stand by...", 5)
