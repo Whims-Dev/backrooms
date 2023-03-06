@@ -121,15 +121,12 @@ local DeepwokenInfo = {
             local Character = GetCharacter(Player);
             local Extra = {};
             if Character then
-                local Blood, Armor, Sanity = Character:FindFirstChild('Blood'), Character:FindFirstChild('Armor'), Character:FindFirstChild('Sanity');
+                local Blood, Armor = Character:FindFirstChild('Blood'), Character:FindFirstChild('Armor');
                 if Blood and Blood.ClassName == 'DoubleConstrainedValue' then
                     table.insert(Extra, ('B%d'):format(Blood.Value));
                 end
                 if Armor and Armor.ClassName == 'DoubleConstrainedValue' then
                     table.insert(Extra, ('A%d'):format(math.floor(Armor.Value / 10)));
-                end
-                if Sanity and Sanity.ClassName == 'DoubleConstrainedValue' then
-                    table.insert(Extra, ('S%d'):format(Sanity.Value));
                 end
             end
             local BackpackChildren = Player.Backpack:GetChildren()
