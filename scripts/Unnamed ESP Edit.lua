@@ -121,21 +121,27 @@ local DeepwokenInfo = {
             local Character = GetCharacter(Player);
             local Extra = {};
             if Character then
-                local Blood, Armor = Character:FindFirstChild('Blood'), Character:FindFirstChild('Armor');
+                local Blood, Armor, Sanity = Character:FindFirstChild('Blood'), Character:FindFirstChild('Armor'), Character:FindFirstChild('Sanity');
                 if Blood and Blood.ClassName == 'DoubleConstrainedValue' then
                     table.insert(Extra, ('B%d'):format(Blood.Value));
                 end
                 if Armor and Armor.ClassName == 'DoubleConstrainedValue' then
                     table.insert(Extra, ('A%d'):format(math.floor(Armor.Value / 10)));
                 end
+                if Sanity and Sanity.ClassName == 'DoubleConstrainedValue' then
+                    table.insert(Extra, ('S%d'):format(Sanity.Value));
+                end
             end
             local BackpackChildren = Player.Backpack:GetChildren()
             for index = 1, #BackpackChildren do
-                local Oath = BackpackChildren[index]
-                if Oath.ClassName == 'Folder' and Oath.Name:find('Talent:Oath') then
-                    local OathName = Oath.Name:gsub('Talent:Oath: ', '')
+                local Item = BackpackChildren[index]
+                if Item.ClassName == 'Folder' and Item.Name:find('Talent:Oath') then
+                    local OathName = Item.Name:gsub('Talent:Oath: ', '')
                     table.insert(Extra, OathName);
                 end
+				if (Item:IsA("Tool") and Item.Name == "Talent:Voideye") then
+					table.insert(Extra, "Voidwalker")
+				end
             end
             if #Extra > 0 then Name = Name .. ' [' .. table.concat(Extra, '-') .. ']'; end
         end
@@ -145,9 +151,9 @@ local DeepwokenInfo = {
 
 local Modules = {
 	[6032399813] = DeepwokenInfo, -- Etrean
-    [6473861193] = DeepwokenInfo, -- Eastern Luminent
+	[6473861193] = DeepwokenInfo, -- Eastern Luminent
 	[8668476218] = DeepwokenInfo, -- Trial of One
-    [5735553160] = DeepwokenInfo, -- Depths
+	[5735553160] = DeepwokenInfo, -- Depths
 	[8668476218] = DeepwokenInfo, -- Layer 2
 };
 
