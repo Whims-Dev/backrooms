@@ -133,6 +133,18 @@ uIAspectRatioConstraint.Parent = main
 main.Parent = pikaHub
 pikaHub.Parent = CoreGui
 
+local Connections = {}
+local function DestroyConnection(Name)
+	if (Connections[Name]) then
+		Connections[Name]:Disconnect()
+		Connections[Name] = nil;
+	end
+end
+local function MakeConnection(Name, Connection)
+	DestroyConnection(Name);
+	Connections[Name] = Connection;
+end
+
 function NewSection(Section)
 	local sectionButton = Instance.new("TextButton")
 	sectionButton.Name = "SectionButton"
@@ -323,10 +335,9 @@ local jumpInfo = Universal.Number("Jump Strength", 100, 0, 600)
 Universal.Button("Super Jump", function()
 	Player.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, jumpInfo.value, 0)
 end)
-local Noclippy = nil;
 Universal.Toggle("Noclip", false, function(value)
 	if (value) then
-		Noclippy = RunService.Stepped:Connect(function()
+		MakeConnection("Noclip", RunService.Stepped:Connect(function()
 			local Character = Player.Character;
 			if (Character == nil) then return end
 			for _, p in pairs(Character:GetDescendants()) do
@@ -334,11 +345,9 @@ Universal.Toggle("Noclip", false, function(value)
 					p.CanCollide = false
 				end
 			end
-		end)
+		end))
 	else
-		if (Noclippy) then
-			Noclippy:Disconnect()
-		end
+		DestroyConnection("Noclip")
 		local Character = Player.Character;
 		if (Character ~= nil) then
 			if (Character:FindFirstChild("UpperTorso")) then
@@ -414,33 +423,29 @@ Universal.Button("Goto Saved Position", function()
 end)
 MC.Visible = true;
 local Redwood = NewSection("Redwood Prison: Reworked")
-local CurrentWinded, WindedRespawned;
 Redwood.Toggle("Disable Mountain Wind", false, function(value)
-	if (WindedRespawned) then WindedRespawned:Disconnect() end
 	if (value) then
 		local function NoWinded(c)
-			if (CurrentWinded) then CurrentWinded:Disconnect() end
-			CurrentWinded = c.ChildAdded:Connect(function(i)
+			MakeConnection("MountainWinded", c.ChildAdded:Connect(function(i)
 				if (i:IsA("Folder")) and (i.Name == "Winded") then
 					task.wait(1)
 					i:Destroy()
 				end
-			end)
+			end))
 			if (c:FindFirstChild("Winded")) and (c.Winded:IsA("Folder")) then
 				c.Winded:Destroy()
 			end
 		end
-		WindedRespawned = Player.CharacterAdded:Connect(NoWinded)
+		MakeConnection("WindedRespawned", Player.CharacterAdded:Connect(NoWinded))
 		if (Player.Character) then
 			NoWinded(Player.Character)
 		end
 	else
-		if (CurrentWinded) then CurrentWinded:Disconnect() end
-		if (WindedRespawned) then WindedRespawned:Disconnect() end
+		DestroyConnection("MountainWinded")
+		DestroyConnection("WindedRespawned")
 	end
 end)
 local Deepwoken = NewSection("Deepwoken")
-local modcheck;
 local GroupInfo = GroupService:GetGroupInfoAsync(5212858);
 local function GetRoleInfoFromRank(Rank)
 	for _, info in pairs(GroupInfo.Roles) do
@@ -455,12 +460,12 @@ end)
 Deepwoken.Toggle("Mod Check", false, function(value)
 	if (value) then
 		Notify("Mod Check", "Checking for moderators, please stand by...", 5)
-		modcheck = Players.PlayerAdded:Connect(function(p)
+		MakeConnection("dwModcheck", Players.PlayerAdded:Connect(function(p)
 			local Rank = p:GetRankInGroup(5212858);
 			if (Rank) and (Rank >= 1) then
 				Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank(Rank).Name), math.huge)
 			end
-		end)
+		end))
 		local found = false;
 		for _, p in pairs(Players:GetPlayers()) do
 			xpcall(function()
@@ -477,9 +482,7 @@ Deepwoken.Toggle("Mod Check", false, function(value)
 			Notify("Mod Check", "All clear!", 5)
 		end
 	else
-		if (modcheck ~= nil) then
-			modcheck:Disconnect()
-		end
+		DestroyConnection("dwModcheck")
 	end
 end)
 Deepwoken.Toggle("Fly", false, function(value)
@@ -502,6 +505,45 @@ local call; call = hookmetamethod(game, "__namecall", newcclosure(function(self,
 	end
 	return call(self, ...);
 end))
+Deepwoken.Toggle("Auto Charisma", false, function(value)
+	if (value) then
+		local Bindable; do
+			for _, c in pairs(getnilinstances()) do
+				if (c.Name == "MessagePosted") then
+					Bindable = c;
+					break;
+				end
+			end
+		end
+		MakeConnection("AutoCharisma", Player.DescendantAdded:Connect(function(prompt)
+			if (prompt:IsA("TextLabel")) and (prompt.Name == "Prompt") and (prompt.Parent.Name == "SimplePrompt") then
+				if (prompt.Text:match("small talk")) then
+					local o = prompt.Text:split("'");
+					local msg = "";
+					for i = 2, #o do
+						local v = o[i];
+						if (#v == 0) then continue end
+						local add = "";
+						for e = 1, #v do
+							local byte = string.byte(string.sub(v, e, e));
+							if (byte >= 65) and (byte <= 122) then
+								add = add .. string.lower(string.sub(v, e, e))
+							end
+						end
+						msg = msg .. add;
+						if ((#o - 1) ~= i) then
+							msg = msg .."'";
+						end
+					end
+					task.wait(0.5)
+					Bindable:Fire(msg)
+				end
+			end
+		end))
+	else
+		DestroyConnection("AutoCharisma")
+	end
+end)
 Deepwoken.Toggle("Custom Voices", false, function(value)
 	if (value) then
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/DeepwokenVoices.lua", true))()
@@ -514,7 +556,7 @@ Deepwoken.Toggle("Custom Voices", false, function(value)
 		end
 	end
 end)
-local sanityMeter, parryOverlayChanged, parryRespawned;
+local sanityMeter;
 Deepwoken.Toggle("Sanity Check", false, function(value)
 	if (value) then
 		if (sanityMeter) then sanityMeter:Destroy() end
@@ -551,11 +593,10 @@ Deepwoken.Toggle("Sanity Check", false, function(value)
 		sanityMeter.Parent = CoreGui;
 		local TweenOut0, TweenOut1;
 		local function NewCharacter()
-			if (parryOverlayChanged) then parryOverlayChanged:Disconnect() end
 			if (Player.PlayerGui:FindFirstChild("StatsGui")) then
 				local visibleTimer = 0;
 				local Indicator = Player.PlayerGui.StatsGui.CombatStats.Indicators.Parry;
-				parryOverlayChanged = Indicator.Changed:Connect(function()
+				MakeConnection("parryOverlayChanged", Indicator.Changed:Connect(function()
 					if (Indicator.ImageTransparency > 0.1) then
 						if (visibleTimer <= 0) then
 							visibleTimer = 3;
@@ -578,16 +619,18 @@ Deepwoken.Toggle("Sanity Check", false, function(value)
 							visibleTimer = 3;
 						end
 					end
-				end)
+				end))
 			end
 		end
-		parryRespawned = Player.CharacterAdded:Connect(NewCharacter)
+		MakeConnection("ParryRespawned", Player.CharacterAdded:Connect(NewCharacter))
 		NewCharacter()
 	else
 		if (sanityMeter) then
 			sanityMeter:Destroy()
 			sanityMeter = nil;
 		end
+		DestroyConnection("parryOverlayChanged")
+		DestroyConnection("ParryRespawned")
 	end
 end)
 local LeaderboardRespawn;
@@ -741,14 +784,11 @@ shared.PikaHubDisconnect = function()
 	InputEnded:Disconnect();
 	speedController:Disconnect();
 	speedDash:Disconnect();
-	if (CurrentWinded) then CurrentWinded:Disconnect() end
-	if (WindedRespawned) then WindedRespawned:Disconnect() end
-	if (modcheck) then modcheck:Disconnect() end
-	if (parryOverlayChanged) then parryOverlayChanged:Disconnect() end
-	if (parryRespawned) then parryRespawned:Disconnect() end
+	for i, v in pairs(Connections) do
+		v:Disconnect()
+	end
 	if (ActiveAimbot) then ActiveAimbot:Disconnect() end
 	if (sanityMeter) then sanityMeter:Destroy() end
 	if (shared.flyinput) then shared.flyinput:Disconnect() end
 	if (shared.FlyHandler) then shared.FlyHandler:Disconnect() end
-	if (Noclippy) then Noclippy:Disconnect() end
 end
