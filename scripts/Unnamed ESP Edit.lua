@@ -108,15 +108,10 @@ local DeepwokenInfo = {
                 local Humanoid = v:FindFirstChild("Humanoid")
                 if (RootPart ~= nil) and (Humanoid ~= nil) then
                     local Percent = (Humanoid.Health/Humanoid.MaxHealth)
-					local Name = v.Name;
+					local Name = string.gsub(v.Name, "%d+", "");
 					if (Name:sub(1, 1) == ".") then
 						Name = string.sub(Name, 2);
 					end
-					repeat
-						if (tonumber(Name:sub(#Name, #Name))) then
-							Name = Name:sub(1, #Name - 1)
-						end
-					until not tonumber(Name:sub(#Name, #Name))
                     pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, string.format('%s\n[%s/%s]', Name, Round(Humanoid.Health), Humanoid.MaxHealth), Color3.new(1-Percent, Percent, 0));
                 end
             end
