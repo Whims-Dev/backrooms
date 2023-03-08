@@ -98,6 +98,14 @@ local function Round(num, dec)
     return (math.round(num*(10^dec)))/(10^dec)
 end
 
+local function GrammaticallyCorrect(str)
+	local spl = string.split(str, " ")
+	for i, v in pairs(spl) do
+		spl[i] = v:sub(1,1):upper() .. v:sub(2)
+	end
+	return table.concat(spl, " ");
+end
+
 local DeepwokenInfo = {
     CustomESP = function()
         if (workspace:FindFirstChild('Live')) then
@@ -108,11 +116,11 @@ local DeepwokenInfo = {
                 local Humanoid = v:FindFirstChild("Humanoid")
                 if (RootPart ~= nil) and (Humanoid ~= nil) then
                     local Percent = (Humanoid.Health/Humanoid.MaxHealth)
-					local Name = string.gsub(v.Name, "%d+", "");
+					local Name = string.lower(v.Name:gsub("%d+", "")):gsub("_", " ")
 					if (Name:sub(1, 1) == ".") then
 						Name = string.sub(Name, 2);
 					end
-                    pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, string.format('%s\n[%s/%s]', Name, Round(Humanoid.Health), Humanoid.MaxHealth), Color3.new(1-Percent, Percent, 0));
+                    pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, string.format('%s\n[%s/%s]', GrammaticallyCorrect(Name), Round(Humanoid.Health), Humanoid.MaxHealth), Color3.new(1-Percent, Percent, 0));
                 end
             end
         end
