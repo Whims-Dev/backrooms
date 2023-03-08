@@ -1,6 +1,7 @@
 -- pikahub script
 -- made by tk
 
+local Lighting = game:GetService("Lighting")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local GroupService = game:GetService("GroupService")
@@ -145,7 +146,7 @@ local function MakeConnection(Name, Connection)
 	Connections[Name] = Connection;
 end
 
-function NewSection(Section)
+local function NewSection(Section)
 	local sectionButton = Instance.new("TextButton")
 	sectionButton.Name = "SectionButton"
 	sectionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
@@ -270,6 +271,44 @@ function NewSection(Section)
 				end
 			else
 				button.Text = lastValue;
+			end
+		end)
+		if (Callback ~= nil) then
+			Callback(info.value);
+		end
+		return info, number, controller;
+	end
+	function Create.String(Text, Default, Callback)
+		local Default = (tonumber(Default) or "");
+		local info = { value = Default };
+		local number = Instance.new("Frame")
+		number.Name = "Number"
+		number.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		number.BackgroundTransparency = 0.8
+		number.BorderSizePixel = 0
+		number.Size = UDim2.new(1, 0, 0, 50)
+		FeatureText(number, Text)
+		local button = Instance.new("TextBox")
+		button.Name = "Button"
+		button.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+		button.Text = Default
+		button.TextColor3 = Color3.fromRGB(255, 255, 255)
+		button.TextScaled = true
+		button.TextSize = 14
+		button.TextWrapped = true
+		button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		button.BackgroundTransparency = 0.7
+		button.BorderSizePixel = 0
+		button.Position = UDim2.fromScale(0.784, 0.16)
+		button.Size = UDim2.fromScale(0.183, 0.66)
+		Roundify(button)
+		Padding(button, 0.17, 0.05, 0.05, 0.17)
+		button.Parent = number
+		number.Parent = container;
+		local controller = button.FocusLost:Connect(function()
+			info.value = button.Text;
+			if (Callback ~= nil) then
+				Callback(info.value);
 			end
 		end)
 		if (Callback ~= nil) then
@@ -505,6 +544,46 @@ local call; call = hookmetamethod(game, "__namecall", newcclosure(function(self,
 	end
 	return call(self, ...);
 end))
+local dwNPCName = Deepwoken.String("NPC Name", "")
+Deepwoken.Button("Delete NPC", function()
+	if (table.find({"", " "}, dwNPCName.value)) then
+		Notify("Delete NPC", "Invalid NPC name!", 5)
+		return
+	end
+	local target = string.lower(dwNPCName.value);
+	local notfound, noownership, name = true, true, "";
+	for _, c in pairs(workspace.Live:GetChildren()) do
+		if (string.lower(c.Name):match(target)) then
+			local humanoid = c:FindFirstChildWhichIsA("Humanoid")
+			if (not humanoid) then continue end
+			notfound, name = false, c.Name;
+			for _, p in pairs(c:GetChildren()) do
+				if (p:IsA("BasePart")) and (isnetworkowner(p)) then
+					noownership = false;
+					humanoid.Health = 0;
+					c:Destroy()
+					break;
+				end
+			end
+		end
+	end
+	if (notfound) then
+		Notify("Delete NPC", "NPC does not exist or is not spawned in!", 5)
+	elseif (noownership) then
+		Notify("Delete NPC", "You do not have ownership of this NPC!", 5)
+	else
+		Notify("Delete NPC", string.format("Successfully deleted %s!", name), 5)
+	end
+end)
+Deepwoken.Toggle("No Fog", false, function(value)
+	if (value) then
+		MakeConnection("dw No Fog", RunService.Heartbeat:Connect(function()
+			Lighting.FogEnd = 10000000
+		end))
+	else
+		DestroyConnection("dw No Fog")
+	end
+end)
 Deepwoken.Toggle("Auto Charisma", false, function(value)
 	if (value) then
 		local Bindable; do
@@ -542,18 +621,6 @@ Deepwoken.Toggle("Auto Charisma", false, function(value)
 		end))
 	else
 		DestroyConnection("AutoCharisma")
-	end
-end)
-Deepwoken.Toggle("Custom Voices", false, function(value)
-	if (value) then
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/DeepwokenVoices.lua", true))()
-	else
-		if (shared.PlayerAddedDsounds) then
-			shared.PlayerAddedDsounds:Disconnect()
-		end
-		if (shared.CharacterAddedDsounds) then
-			shared.CharacterAddedDsounds:Disconnect()
-		end
 	end
 end)
 local sanityMeter;
@@ -681,6 +748,18 @@ function NewLeaderboard()
 		NewSpectate(f)
 	end
 end
+Deepwoken.Toggle("Custom Voices", false, function(value)
+	if (value) then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/DeepwokenVoices.lua", true))()
+	else
+		if (shared.PlayerAddedDsounds) then
+			shared.PlayerAddedDsounds:Disconnect()
+		end
+		if (shared.CharacterAddedDsounds) then
+			shared.CharacterAddedDsounds:Disconnect()
+		end
+	end
+end)
 
 local function TEclone(part, dt)
 	local clone = Instance.new("Part")
