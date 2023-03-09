@@ -106,89 +106,6 @@ local function GrammaticallyCorrect(str)
 	return table.concat(spl, " ");
 end
 
-local DeepwokenInfo = {
-    CustomESP = function()
-        if (workspace:FindFirstChild('Live')) then
-            for i, v in pairs(workspace.Live:GetChildren()) do
-                local plr = Players:GetPlayerFromCharacter(v);
-                if (plr) then continue end
-                local RootPart = v:FindFirstChild("HumanoidRootPart")
-                local Humanoid = v:FindFirstChild("Humanoid")
-                if (RootPart ~= nil) and (Humanoid ~= nil) then
-                    local Percent = (Humanoid.Health/Humanoid.MaxHealth)
-					local Name = string.lower(v.Name:gsub("%d+", "")):gsub("_", " ")
-					if (Name:sub(1, 1) == ".") then
-						Name = string.sub(Name, 2);
-					end
-                    pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, string.format('%s\n[%s/%s]', GrammaticallyCorrect(Name), Round(Humanoid.Health), Humanoid.MaxHealth), Color3.new(1-Percent, Percent, 0));
-                end
-            end
-        end
-        if (workspace:FindFirstChild('NPCs')) then
-            for i, v in pairs(workspace.NPCs:GetChildren()) do
-                local RootPart = v:FindFirstChild("HumanoidRootPart")
-                if (RootPart ~= nil) then
-                    pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, v.Name, Color3.new(1-Percent, Percent, 0));
-                end
-            end
-        end
-    end;
-    CustomPlayerTag = function(Player)
-        local Name = '';
-        local CharacterName = Player:GetAttribute('CharacterName');
-        if not IsStringEmpty(CharacterName) then
-            Name = ('\n[%s]'):format(CharacterName);
-            local Character = GetCharacter(Player);
-            local Extra = {};
-            if Character then
-                local Blood, Armor = Character:FindFirstChild('Blood'), Character:FindFirstChild('Armor');
-                if Blood and Blood.ClassName == 'DoubleConstrainedValue' then
-                    table.insert(Extra, ('B%d'):format(Blood.Value));
-                end
-                if Armor and Armor.ClassName == 'DoubleConstrainedValue' then
-                    table.insert(Extra, ('A%d'):format(math.floor(Armor.Value / 10)));
-                end
-            end
-            local BackpackChildren = Player.Backpack:GetChildren()
-            for index = 1, #BackpackChildren do
-                local Item = BackpackChildren[index]
-                if Item.ClassName == 'Folder' and Item.Name:find('Talent:Oath') then
-                    local OathName = Item.Name:gsub('Talent:Oath: ', '')
-                    table.insert(Extra, OathName);
-                end
-				if (Item:IsA("Tool") and Item.Name == "Talent:Voideye") then
-					table.insert(Extra, "Voidwalker")
-				end
-            end
-            if #Extra > 0 then Name = Name .. ' [' .. table.concat(Extra, '-') .. ']'; end
-        end
-        return Name;
-    end;
-};
-
-local Modules = {
-	[6032399813] = DeepwokenInfo, -- Etrean
-	[6473861193] = DeepwokenInfo, -- Eastern Luminent
-	[8668476218] = DeepwokenInfo, -- Trial of One
-	[5735553160] = DeepwokenInfo, -- Depths
-	[8668476218] = DeepwokenInfo, -- Layer 2
-};
-
-if Modules[game.PlaceId] ~= nil or Modules[game.GameId] ~= nil then
-	local Module = Modules[game.PlaceId] or Modules[game.GameId]
-
-	if Module.Initialize then
-		Module.Initialize()
-	end
-
-	CustomPlayerTag = Module.CustomPlayerTag or nil
-	CustomESP = Module.CustomESP or nil
-	CustomCharacter = Module.CustomCharacter or nil
-	GetHealth = Module.GetHealth or nil
-	GetAliveState = Module.GetAliveState or nil
-	CustomRootPartName = Module.CustomRootPartName or nil
-end
-
 function GetCharacter(Player)
 	return CustomCharacter and CustomCharacter(Player) or Player.Character
 end
@@ -320,6 +237,98 @@ local Options = setmetatable({}, {
 		}));
 	end;
 })
+
+local DeepwokenInfo = {
+    CustomESP = function()
+        if (workspace:FindFirstChild('Live')) then
+            for i, v in pairs(workspace.Live:GetChildren()) do
+                local plr = Players:GetPlayerFromCharacter(v);
+                if (plr) then continue end
+                local RootPart = v:FindFirstChild("HumanoidRootPart")
+                local Humanoid = v:FindFirstChild("Humanoid")
+                if (RootPart ~= nil) and (Humanoid ~= nil) then
+                    local Percent = (Humanoid.Health/Humanoid.MaxHealth)
+					local Name = string.lower(v.Name:gsub("%d+", "")):gsub("_", " ")
+					if (Name:sub(1, 1) == ".") then
+						Name = string.sub(Name, 2);
+					end
+					if (not Options.ShowMobs.Value) then RootPart = nil end
+                    pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, string.format('%s\n[%s/%s]', GrammaticallyCorrect(Name), Round(Humanoid.Health), Humanoid.MaxHealth), Color3.new(1-Percent, Percent, 0));
+                end
+            end
+        end
+        if (workspace:FindFirstChild('NPCs')) then
+            for i, v in pairs(workspace.NPCs:GetChildren()) do
+                local RootPart = v:FindFirstChild("HumanoidRootPart")
+                if (RootPart ~= nil) then
+					if (not Options.ShowInteractable.Value) then RootPart = nil end
+                    pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, v.Name, Color3.new(1, 1, 0.5));
+                end
+            end
+        end
+    end;
+    CustomPlayerTag = function(Player)
+        local Name = '';
+        local CharacterName = Player:GetAttribute('CharacterName');
+        if not IsStringEmpty(CharacterName) then
+            Name = ('\n[%s]'):format(CharacterName);
+            local Character = GetCharacter(Player);
+            local Extra = {};
+            if Character then
+                local Blood, Armor = Character:FindFirstChild('Blood'), Character:FindFirstChild('Armor');
+                if Blood and Blood.ClassName == 'DoubleConstrainedValue' then
+                    table.insert(Extra, ('B%d'):format(Blood.Value));
+                end
+                if Armor and Armor.ClassName == 'DoubleConstrainedValue' then
+                    table.insert(Extra, ('A%d'):format(math.floor(Armor.Value / 10)));
+                end
+            end
+            local BackpackChildren = Player.Backpack:GetChildren()
+            for index = 1, #BackpackChildren do
+                local Item = BackpackChildren[index]
+                if Item.ClassName == 'Folder' and Item.Name:find('Talent:Oath') then
+                    local OathName = Item.Name:gsub('Talent:Oath: ', '')
+                    table.insert(Extra, OathName);
+                end
+				if (Item:IsA("Tool") and Item.Name == "Talent:Voideye") then
+					table.insert(Extra, "Voidwalker")
+				end
+            end
+            if #Extra > 0 then Name = Name .. ' [' .. table.concat(Extra, '-') .. ']'; end
+        end
+        return Name;
+    end;
+	MoreOptions = {
+		{'ShowMobs', 'Show Mobs', true},
+		{'ShowInteractable', 'Show Interactable', true},
+	};
+};
+
+local Modules = {
+	[6032399813] = DeepwokenInfo, -- Etrean
+	[6473861193] = DeepwokenInfo, -- Eastern Luminent
+	[8668476218] = DeepwokenInfo, -- Trial of One
+	[5735553160] = DeepwokenInfo, -- Depths
+	[8668476218] = DeepwokenInfo, -- Layer 2
+};
+
+local Module = Modules[game.PlaceId] or Modules[game.GameId]
+if Module ~= nil then
+	if Module.Initialize then
+		Module.Initialize()
+	end
+	if (Module.MoreOptions) then
+		for _, v in pairs(Module.MoreOptions) do
+			Options(table.unpack(v));
+		end
+	end
+	CustomPlayerTag = Module.CustomPlayerTag or nil
+	CustomESP = Module.CustomESP or nil
+	CustomCharacter = Module.CustomCharacter or nil
+	GetHealth = Module.GetHealth or nil
+	GetAliveState = Module.GetAliveState or nil
+	CustomRootPartName = Module.CustomRootPartName or nil
+end
 
 function Load()
 	local _, Result = pcall(readfile, OptionsFile);
@@ -1147,6 +1156,11 @@ function CreateMenu(NewPosition) -- Create Menu
 	Sliders	   = {};
 
 	local BaseSize = V2New(300, 625);
+	if (Module ~= nil) and (Module.MoreOptions) then
+		for i = 1, #Module.MoreOptions do
+			BaseSize = V2New(300, BaseSize.Y + 30)
+		end
+	end
 	local BasePosition = NewPosition or V2New(Camera.ViewportSize.X / 8 - (BaseSize.X / 2), Camera.ViewportSize.Y / 2 - (BaseSize.Y / 2));
 
 	BasePosition = V2New(math.clamp(BasePosition.X, 0, Camera.ViewportSize.X), math.clamp(BasePosition.Y, 0, Camera.ViewportSize.Y));
@@ -1763,6 +1777,7 @@ local function UpdatePlayerData()
 				local Data = shared.InstanceData[v.Instance:GetDebugId()] or { Instances = {}; DontDelete = true };
 
 				Data.Instance = v.Instance;
+				Data.Base = i;
 
 				Data.Instances['OutlineTracer'] = Data.Instances['OutlineTracer'] or NewDrawing'Line'{
 					Transparency	= 0.75;
@@ -2083,7 +2098,7 @@ local function Update()
 
 		for i, v in pairs(shared.InstanceData) do
 			if not Players:FindFirstChild(tostring(i)) then
-				if not shared.InstanceData[i].DontDelete then
+				if not v.DontDelete then
 					GetTableData(v.Instances)(function(i, obj)
 						obj.Visible = false;
 						obj:Remove();
@@ -2091,7 +2106,7 @@ local function Update()
 					end)
 					shared.InstanceData[i] = nil;
 				else
-					if shared.InstanceData[i].Instance == nil or shared.InstanceData[i].Instance.Parent == nil then
+					if v.Instance == nil or v.Instance.Parent == nil or (RenderList.Instances[v.Base] and RenderList.Instances[v.Base].Instance == nil) then
 						GetTableData(v.Instances)(function(i, obj)
 							obj.Visible = false;
 							obj:Remove();
