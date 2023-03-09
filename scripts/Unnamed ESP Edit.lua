@@ -1214,7 +1214,7 @@ function CreateMenu(NewPosition) -- Create Menu
 	});
 	Menu:AddMenuInstance('TopBarTextBR', 'Text', {
 		Size 		= 18;
-		Position	= shared.MenuDrawingData.Instances.TopBarTwo.Position + V2New(BaseSize.X - 75, 25);
+		Position	= shared.MenuDrawingData.Instances.TopBarTwo.Position + V2New(BaseSize.X - 95, 25);
 		Text		= 'by ic3w0lf & tk';
 		Color		= Colors.Secondary.Light;
 		Visible		= true;
