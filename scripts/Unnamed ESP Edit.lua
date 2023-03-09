@@ -1205,7 +1205,7 @@ function CreateMenu(NewPosition) -- Create Menu
 	Menu:AddMenuInstance('TopBarText', 'Text', {
 		Size 		= 25;
 		Position	= shared.MenuDrawingData.Instances.TopBarTwo.Position + V2New(25, 10);
-		Text		= 'Unnamed ESP';
+		Text		= "tk's Unnamed ESP";
 		Color		= Colors.Secondary.Light;
 		Visible		= true;
 		Transparency= 1; -- proto outline fix
@@ -1215,7 +1215,7 @@ function CreateMenu(NewPosition) -- Create Menu
 	Menu:AddMenuInstance('TopBarTextBR', 'Text', {
 		Size 		= 18;
 		Position	= shared.MenuDrawingData.Instances.TopBarTwo.Position + V2New(BaseSize.X - 75, 25);
-		Text		= 'by ic3w0lf';
+		Text		= 'by ic3w0lf & tk';
 		Color		= Colors.Secondary.Light;
 		Visible		= true;
 		Transparency= 1;
