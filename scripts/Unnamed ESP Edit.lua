@@ -124,6 +124,14 @@ local DeepwokenInfo = {
                 end
             end
         end
+        if (workspace:FindFirstChild('NPCs')) then
+            for i, v in pairs(workspace.NPCs:GetChildren()) do
+                local RootPart = v:FindFirstChild("HumanoidRootPart")
+                if (RootPart ~= nil) then
+                    pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, v.Name, Color3.new(1-Percent, Percent, 0));
+                end
+            end
+        end
     end;
     CustomPlayerTag = function(Player)
         local Name = '';
