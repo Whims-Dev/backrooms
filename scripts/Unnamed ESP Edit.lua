@@ -266,6 +266,15 @@ local DeepwokenInfo = {
                 end
             end
         end
+        if (workspace:FindFirstChild('DepthsWhirlpool')) then
+            for i, v in pairs(workspace:GetChildren()) do
+                if (v:IsA("Model")) and (v.Name == "DepthsWhirlpool") then
+					local Center = v:FindFirstChild("Center");
+					if (not Options.ShowWhirlpools.Value) then Center = nil end
+                    pcall(RenderList.AddOrUpdateInstance, RenderList, v, Center, "Whirlpool", Color3.new(0.5, 0.5, 1));
+                end
+            end
+        end
     end;
     CustomPlayerTag = function(Player)
         local Name = '';
@@ -301,6 +310,7 @@ local DeepwokenInfo = {
 	MoreOptions = {
 		{'ShowMobs', 'Show Mobs', true},
 		{'ShowInteractable', 'Show Interactable', true},
+		{'ShowWhirlpools', 'Show Whirlpools', true},
 	};
 };
 
