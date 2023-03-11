@@ -275,6 +275,16 @@ local DeepwokenInfo = {
                 end
             end
         end
+        if (workspace:FindFirstChild('Thrown')) then
+            for i, v in pairs(workspace.Thrown:GetChildren()) do
+				if (not v:IsA("Model")) or (v.Name ~= "Model") or (not v:FindFirstChild("Lid")) then continue end
+                local RootPart = v:FindFirstChild("RootPart")
+                if (RootPart ~= nil) then
+					if (not Options.ShowChests.Value) then RootPart = nil end
+                    pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, "Chest", Color3.new(1, 0.5, 1));
+                end
+            end
+        end
     end;
     CustomPlayerTag = function(Player)
         local Name = '';
@@ -311,6 +321,7 @@ local DeepwokenInfo = {
 		{'ShowMobs', 'Show Mobs', true},
 		{'ShowInteractable', 'Show Interactable', true},
 		{'ShowWhirlpools', 'Show Whirlpools', true},
+		{'ShowChests', 'Show Chests', true},
 	};
 };
 
