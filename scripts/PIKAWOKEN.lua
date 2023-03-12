@@ -392,7 +392,7 @@ Universal.Toggle("Noclip", false, function(value)
 			if (Character:FindFirstChild("UpperTorso")) then
 				Character.UpperTorso.CanCollide = true
 				Character.Head.CanCollide = true
-			else
+			elseif (Character:FindFirstChild("Torso")) then
 				Character.Torso.CanCollide = true
 				Character.Head.CanCollide = true
 			end
