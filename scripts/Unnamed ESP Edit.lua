@@ -9,6 +9,7 @@ local HttpService = cloneref(game:GetService'HttpService')
 local TweenService = cloneref(game:GetService'TweenService')
 local RunService = cloneref(game:GetService'RunService')
 local Players = game:GetService'Players'
+local VRService = game:GetService('VRService')
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 local Mouse = LocalPlayer:GetMouse()
@@ -325,12 +326,48 @@ local DeepwokenInfo = {
 	};
 };
 
+local function GetParent(Ancestor, Descendant)
+	if (Descendant.Parent == Ancestor) then return Ancestor; end
+	for _, c in pairs(Ancestor:GetChildren()) do
+		if (Descendant:IsDescendantOf(c)) then
+			return c;
+		end
+	end
+end
+
 local Modules = {
 	[6032399813] = DeepwokenInfo, -- Etrean
 	[6473861193] = DeepwokenInfo, -- Eastern Luminent
-	[8668476218] = DeepwokenInfo, -- Trial of One
 	[5735553160] = DeepwokenInfo, -- Depths
-	[8668476218] = DeepwokenInfo, -- Layer 2
+	[8668476218] = DeepwokenInfo, -- Layer 2/Trial of One
+	[3223065041] = { -- Write a Letter
+		CustomESP = function()
+			if (workspace:FindFirstChild('Pickups')) then
+				for i, v in pairs(workspace.Pickups:GetDescendants()) do
+					local Name = GetParent(workspace.Pickups, v).Name;
+					if (v:IsA("ClickDetector")) and (v.Parent:IsA("BasePart")) then
+						local Parent = v.Parent;
+						if (not Options.ShowPickupsWAL.Value) then Parent = nil end
+						pcall(RenderList.AddOrUpdateInstance, RenderList, v.Parent, Parent, Name, Color3.new(0.6, 0, 1));
+					end
+				end
+			end
+			if (workspace:FindFirstChild('Interactables')) then
+				for i, v in pairs(workspace.Interactables:GetDescendants()) do
+					local Name = GetParent(workspace.Interactables, v).Name;
+					if (v:IsA("ClickDetector")) and (v.Parent:IsA("BasePart")) then
+						local Parent = v.Parent;
+						if (not Options.ShowInteractableWAL.Value) then Parent = nil end
+						pcall(RenderList.AddOrUpdateInstance, RenderList, v.Parent, Parent, Name, Color3.new(0, 0.8, 1));
+					end
+				end
+			end
+		end;
+		MoreOptions = {
+			{'ShowInteractableWAL', 'Show Interactable', true},
+			{'ShowPickupsWAL', 'Show Pickups', true},
+		};
+	},
 };
 
 local Module = Modules[game.PlaceId] or Modules[game.GameId]
