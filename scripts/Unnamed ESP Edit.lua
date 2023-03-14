@@ -326,13 +326,20 @@ local DeepwokenInfo = {
 	};
 };
 
+local SavedParents = {}
+
 local function GetParent(Ancestor, Descendant)
-	if (Descendant.Parent == Ancestor) then return Ancestor; end
+	if (SavedParents[Descendant]) then return SavedParents[Descendant]; end
+	local Return = nil;
+	if (Descendant.Parent == Ancestor) then Return = Ancestor; end
 	for _, c in pairs(Ancestor:GetChildren()) do
 		if (Descendant:IsDescendantOf(c)) then
-			return c;
+			Return = c;
+			break;
 		end
 	end
+	SavedParents[Descendant] = Return;
+	return Return;
 end
 
 local Modules = {
