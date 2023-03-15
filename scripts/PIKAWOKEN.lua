@@ -460,6 +460,9 @@ Universal.Button("Goto Saved Position", function()
 		Player.Character.HumanoidRootPart.CFrame, Camera.CFrame = SavedCFrame, SavedCamera;
 	end
 end)
+Universal.Button("Dawnwalker VC Visualizer", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Dawnwalker%20VC%20Visualizer.lua", true))()
+end)
 MC.Visible = true;
 local Redwood = NewSection("Redwood Prison: Reworked")
 Redwood.Toggle("Disable Mountain Wind", false, function(value)
