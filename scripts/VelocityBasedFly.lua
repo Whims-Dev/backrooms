@@ -40,8 +40,8 @@ shared.flyinput = UserInputService.InputBegan:Connect(function(input, gpe)
                 if (Torso == nil) then return end
                 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid");
                 if (Humanoid ~= nil) and (Humanoid.PlatformStand) then
-                    print("I'M TRYING BRO")
-                    Humanoid.PlatformStand = false
+                    keypress(0x30)
+                    keyrelease(0x30)
                 end
                 local Control = { F = 0, B = 0, L = 0, R = 0 }
                 for k, v in pairs(FlyDirections) do
@@ -50,7 +50,7 @@ shared.flyinput = UserInputService.InputBegan:Connect(function(input, gpe)
                     end
                 end
                 if (Control.L + Control.R ~= 0) or (Control.F + Control.B ~= 0) then
-                    FlySpeed = math.min(FlySpeed + 0.5 + (FlySpeed / MaxFlySpeed), 200)
+                    FlySpeed = math.min(FlySpeed + 0.5 + (FlySpeed / MaxFlySpeed), MaxFlySpeed)
                 elseif (((Control.L + Control.R == 0) or (Control.F + Control.B == 0)) and FlySpeed ~= 0) then
                     FlySpeed = math.max(FlySpeed - 5, 0);
                 end
