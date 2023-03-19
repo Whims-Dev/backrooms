@@ -8,6 +8,8 @@
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
+local Debris = game:GetService("Debris")
+local TweenService = game:GetService("TweenService")
 
 local Player = Players.LocalPlayer;
 local Mouse = Player:GetMouse()
@@ -23,6 +25,12 @@ local FlyDirections = {
 local LastControl = { F = 0, B = 0, L = 0, R = 0 }; 
 local FlySpeed, MaxFlySpeed = 50, 200;
 
+local Foutline = Instance.new("Highlight")
+Foutline.FillColor = Color3.new(1, 1, 1)
+Foutline.OutlineTransparency = Foutline.FillTransparency
+Foutline.Name = "Foutline"
+Foutline.Parent = Camera
+
 if (shared.flyinput) then shared.flyinput:Disconnect() end
 shared.flyinput = UserInputService.InputBegan:Connect(function(input, gpe)
     if (gpe) then return end
@@ -31,11 +39,25 @@ shared.flyinput = UserInputService.InputBegan:Connect(function(input, gpe)
         if (not Flying) then
             LastControl = { F = 0, B = 0, L = 0, R = 0 }
             shared.FlyHandler:Disconnect()
+            for _, c in pairs(Camera:GetChildren()) do
+                if (c.Name == "Foutline") then
+                    if (Foutline ~= c) then
+                        Debris:AddItem(c, 0.6)
+                    end
+                    TweenService:Create(Foutline, TweenInfo.new(0.6), {
+                        OutlineTransparency = 1,
+                        FillTransparency = 1,
+                    }):Play()
+                end
+            end
         else
             FlySpeed = 50;
             shared.FlyHandler = RunService.RenderStepped:Connect(function()
                 local Character = Player.Character;
                 if (Character == nil) then return end
+                Foutline.Adornee = Character
+                Foutline.FillTransparency = 0.5
+                Foutline.OutlineTransparency = 0.5
                 local Torso = Character:FindFirstChild("HumanoidRootPart");
                 if (Torso == nil) then return end
                 local Humanoid = Character:FindFirstChildWhichIsA("Humanoid");
