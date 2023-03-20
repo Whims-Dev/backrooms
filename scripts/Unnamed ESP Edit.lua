@@ -295,6 +295,19 @@ local DeepwokenInfo = {
             local Character = GetCharacter(Player);
             local Extra = {};
             if Character then
+				local PointsInvested = -10;
+				local Attunementless = true;
+				for i, v in pairs(Character:GetAttributes()) do
+					if (i:sub(1, 5) == "Stat_") then
+						--if (i:sub(6, 12) == "Element") and (v > 0) then
+						--	Attunementless = false
+						--	PointsInvested -= 10
+						--end
+						PointsInvested += v;
+					end
+				end
+				local Power = math.floor(PointsInvested/15)
+				table.insert(Extra, ("P%d"):format(math.clamp(Power, 1, 20)))
                 local Blood, Armor = Character:FindFirstChild('Blood'), Character:FindFirstChild('Armor');
                 if Blood and Blood.ClassName == 'DoubleConstrainedValue' then
                     table.insert(Extra, ('B%d'):format(Blood.Value));
@@ -311,7 +324,7 @@ local DeepwokenInfo = {
                     table.insert(Extra, OathName);
                 end
 				if (Item:IsA("Tool") and Item.Name == "Talent:Voideye") then
-					table.insert(Extra, "Voidwalker")
+					table.insert(Extra, "VW")
 				end
             end
             if #Extra > 0 then Name = Name .. ' [' .. table.concat(Extra, '-') .. ']'; end
