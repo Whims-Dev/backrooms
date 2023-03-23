@@ -368,11 +368,22 @@ local function NewSection(Section)
 end
 
 local Universal, MC = NewSection("Universal")
+Universal.Button("Unnamed ESP", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Unnamed%20ESP%20Edit.lua", true))()
+end)
 local speedInfo = Universal.Toggle("Speedhack", false)
 local speedSpeedInfo = Universal.Number("Dash Speed (ms)", 60, 60, 120)
 local jumpInfo = Universal.Number("Jump Strength", 100, 0, 600)
 Universal.Button("Super Jump", function()
 	Player.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, jumpInfo.value, 0)
+end)
+Universal.Toggle("Fly (F2)", false, function(value)
+	if (value) then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/VelocityBasedFly.lua", true))()
+	else
+		if (shared.flyinput) then shared.flyinput:Disconnect() end
+		if (shared.FlyHandler) then shared.FlyHandler:Disconnect() end
+	end
 end)
 Universal.Toggle("Noclip", false, function(value)
 	if (value) then
@@ -442,9 +453,6 @@ local function GetClosestToScreenPoint(ScreenPoint)
 	end
 	return Target;
 end
-Universal.Button("Unnamed ESP", function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Unnamed%20ESP%20Edit.lua", true))()
-end)
 local SavedCFrame, SavedCamera;
 Universal.Button("Save Current Position", function()
 	xpcall(function()
@@ -525,14 +533,6 @@ Deepwoken.Toggle("Mod Check", false, function(value)
 		end
 	else
 		DestroyConnection("dwModcheck")
-	end
-end)
-Deepwoken.Toggle("Fly", false, function(value)
-	if (value) then
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/VelocityBasedFly.lua", true))()
-	else
-		if (shared.flyinput) then shared.flyinput:Disconnect() end
-		if (shared.FlyHandler) then shared.FlyHandler:Disconnect() end
 	end
 end)
 local NoFallDamage = Deepwoken.Toggle("No Fall Damage", false);
@@ -761,6 +761,34 @@ Deepwoken.Toggle("Custom Voices", false, function(value)
 		if (shared.CharacterAddedDsounds) then
 			shared.CharacterAddedDsounds:Disconnect()
 		end
+	end
+end)
+local VH3 = NewSection("Vampire Hunters 3")
+local autoEscapeInfo; autoEscapeInfo = VH3.Toggle("Auto Escape", false, function(value)
+	if (value) then
+		local KeysArray = {["A"] = 0x41; ["B"] = 0x42; ["C"] = 0x43; ["D"] = 0x44; ["E"] = 0x45; ["F"] = 0x46; ["G"] = 0x47; ["H"] = 0x48; ["I"] = 0x49; ["J"] = 0x4A; ["K"] = 0x4B; ["L"] = 0x4C; ["M"] = 0x4D; ["N"] = 0x4E; ["O"] = 0x4F; ["P"] = 0x50; ["Q"] = 0x51; ["R"] = 0x52; ["S"] = 0x53; ["T"] = 0x54; ["U"] = 0x55; ["V"] = 0x56; ["W"] = 0x57; ["X"] = 0x58; ["Y"] = 0x59; ["Z"] = 0x5A}
+		local lastpress = 0;
+		MakeConnection("VH3_autoescape", RunService.Heartbeat:Connect(function()
+			if (not autoEscapeInfo.value) then return end
+			if (tick() - lastpress) < 0.5 then return end
+			if (Player:FindFirstChild("PlayerGui")) then
+				local gui = Player.PlayerGui:FindFirstChild("GrabbedGui");
+				if (gui) and (gui:FindFirstChild("Frame")) and (gui.Frame:FindFirstChild("Escape")) then
+					local keyframe = gui.Frame.Escape:FindFirstChild("Key");
+					if (keyframe) and (keyframe:FindFirstChild("KeyName")) then
+						local keycode = KeysArray[keyframe.KeyName.Text]
+						if (keycode ~= nil) then
+							print("pressed", tostring(keycode), keyframe.KeyName.Text)
+							keypress(keycode)
+							keyrelease(keycode)
+							lastpress = tick()
+						end
+					end
+				end
+			end
+		end))
+	else
+		DestroyConnection("VH3_autoescape")
 	end
 end)
 
