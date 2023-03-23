@@ -770,7 +770,7 @@ local autoEscapeInfo; autoEscapeInfo = VH3.Toggle("Auto Escape", false, function
 		local lastpress = 0;
 		MakeConnection("VH3_autoescape", RunService.Heartbeat:Connect(function()
 			if (not autoEscapeInfo.value) then return end
-			if (tick() - lastpress) < 0.5 then return end
+			if (tick() - lastpress) < 0.2 then return end
 			if (Player:FindFirstChild("PlayerGui")) then
 				local gui = Player.PlayerGui:FindFirstChild("GrabbedGui");
 				if (gui) and (gui:FindFirstChild("Frame")) and (gui.Frame:FindFirstChild("Escape")) then
