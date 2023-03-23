@@ -388,6 +388,35 @@ local Modules = {
 			{'ShowPickupsWAL', 'Show Pickups', true},
 		};
 	},
+	[504234221] = {
+		CustomPlayerTag = function(Player)
+			local Role = "";
+			if (Player.Backpack:FindFirstChild("Gun")) or (Player.Character:FindFirstChild("Gun", true)) then
+				Role = "Detective"
+			elseif (Player.Character:FindFirstChild("OriginalCol")) then
+				Role = "Vampire"
+			else
+				Role = "Survivor"
+			end
+			local Inventory = {};
+			local cTool = Player.Character:FindFirstChildWhichIsA("Tool")
+			if (cTool ~= nil) then
+				table.insert(Inventory, cTool.Name)
+			else
+				table.insert(Inventory, "Nothing")
+			end
+			return string.format("\n[%s]", Role) .." [".. table.concat(Inventory, "-") .."]"
+		end,
+		CustomESP = function()
+			if (workspace:FindFirstChild('GameStuff')) and (workspace.GameStuff:FindFirstChild("Entities")) then
+				for i, v in pairs(workspace.GameStuff.Entities:GetChildren()) do
+					if (v.Name == "GunPickup") then
+						pcall(RenderList.AddOrUpdateInstance, RenderList, v, v, "Gun", Color3.new(0.533333, 1, 0.960784));
+					end
+				end
+			end
+		end
+	}
 };
 
 local Module = Modules[game.PlaceId] or Modules[game.GameId]
