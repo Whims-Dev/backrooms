@@ -419,12 +419,34 @@ local Modules = {
 		CustomESP = function()
 			if (workspace:FindFirstChild('GameStuff')) and (workspace.GameStuff:FindFirstChild("Entities")) then
 				for i, v in pairs(workspace.GameStuff.Entities:GetChildren()) do
+					local hum = v:FindFirstChildWhichIsA("Humanoid");
 					if (v.Name == "GunPickup") then
-						pcall(RenderList.AddOrUpdateInstance, RenderList, v, v, "Gun", Color3.new(0.533333, 1, 0.960784));
+						local part = v;
+						if (not Options.vh3ShowDroppedGun.Value) then part = nil end
+						pcall(RenderList.AddOrUpdateInstance, RenderList, v, part, "Gun", Color3.new(0.533333, 1, 0.960784));
+					elseif (v.Name == "AmmoBox") then
+						local part = v:FindFirstChild("Union");
+						if (not Options.vh3ShowAmmoBoxes.Value) then part = nil end
+						pcall(RenderList.AddOrUpdateInstance, RenderList, v, part, "Ammo Box", Color3.new(0, 0.274509, 0.023529));
+					elseif (v.Name == "Food") then
+						local part = v:FindFirstChildWhichIsA("BasePart");
+						if (not Options.vh3ShowFood.Value) then part = nil end
+						pcall(RenderList.AddOrUpdateInstance, RenderList, v, part, "Food", Color3.new(0.501960, 1, 0.545098));
+					elseif (hum ~= nil) then
+						local Percent = (hum.Health/hum.MaxHealth)
+						local RootPart = v:FindFirstChild("HumanoidRootPart");
+						if (not Options.vh3ShowMobs.Value) then RootPart = nil end
+						pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, string.format('%s\n[%s/%s]', v.Name, Round(hum.Health), hum.MaxHealth), Color3.new(1-Percent, Percent, 0));
 					end
 				end
 			end
-		end
+		end,
+		MoreOptions = {
+			{'vh3ShowMobs', 'Show Mobs', true},
+			{'vh3ShowDroppedGun', 'Show Dropped Gun', true},
+			{'vh3ShowAmmoBoxes', 'Show Ammo Boxes', true},
+			{'vh3ShowFood', 'Show Consumable', true},
+		};
 	}
 };
 
@@ -2224,12 +2246,6 @@ local function Update()
 				else
 					if v.Instance == nil or v.Instance.Parent == nil or (RenderList.Instances[v.Base] and RenderList.Instances[v.Base].Instance == nil) or (not v.Instance:IsDescendantOf(workspace)) then
 						v.DontDelete = false
-						GetTableData(v.Instances)(function(i, obj)
-							obj.Visible = false;
-							obj:Remove();
-							v.Instances[i] = nil;
-						end)
-						shared.InstanceData[i] = nil;
 					end
 				end
 			end
