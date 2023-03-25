@@ -433,7 +433,16 @@ local function CreateViewExample(sp)
 end
 local function GetClosestToScreenPoint(ScreenPoint)
 	local Closest, Target = 90, nil;
-	for _, e in pairs(Player.Character.Parent:GetChildren()) do
+	local Parent = Player.Character.Parent;
+	if (game.GameId == 504234221) and (workspace:FindFirstChild("GameStuff")) and (workspace.GameStuff:FindFirstChild("Entities")) then
+		local EntityFolder = workspace.GameStuff.Entities;
+		for _, e in pairs(EntityFolder:GetChildren()) do
+			if (e:IsA("Model")) and (e.Name:match("Vampire")) then
+				Parent = EntityFolder;
+			end
+		end
+	end
+	for _, e in pairs(Parent:GetChildren()) do
 		if (e == Player.Character) then continue end
 		local hum: Humanoid = e:FindFirstChildWhichIsA("Humanoid");
 		local head: BasePart = e:FindFirstChild("Head");
@@ -778,7 +787,6 @@ local autoEscapeInfo; autoEscapeInfo = VH3.Toggle("Auto Escape", false, function
 					if (keyframe) and (keyframe:FindFirstChild("KeyName")) then
 						local keycode = KeysArray[keyframe.KeyName.Text]
 						if (keycode ~= nil) then
-							print("pressed", tostring(keycode), keyframe.KeyName.Text)
 							keypress(keycode)
 							keyrelease(keycode)
 							lastpress = tick()
