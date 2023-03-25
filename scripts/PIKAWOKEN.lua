@@ -773,6 +773,9 @@ Deepwoken.Toggle("Custom Voices", false, function(value)
 		end
 	end
 end)
+Deepwoken.Button("Race Morph Menu", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/AzurasDev/DeepwokenRaceMorpher/main/RaceMorphMenu.lua"))()
+end)
 local VH3 = NewSection("Vampire Hunters 3")
 local autoEscapeInfo; autoEscapeInfo = VH3.Toggle("Auto Escape", false, function(value)
 	if (value) then
@@ -798,6 +801,21 @@ local autoEscapeInfo; autoEscapeInfo = VH3.Toggle("Auto Escape", false, function
 		end))
 	else
 		DestroyConnection("VH3_autoescape")
+	end
+end)
+local antiNetInfo; antiNetInfo = VH3.Toggle("Net (1K Escape)", false, function(value)
+	if (value) then
+		MakeConnection("VH3_1knetescape", RunService.Heartbeat:Connect(function()
+			if (not antiNetInfo.value) then return end
+			if (Player:FindFirstChild("PlayerGui")) then
+				local frame = Player.PlayerGui:FindFirstChild("RemoveNet");
+				if (frame) and (frame:FindFirstChild("EscapeProgress")) then
+					frame.EscapeProgress.Value = 99
+				end
+			end
+		end))
+	else
+		DestroyConnection("VH3_1knetescape")
 	end
 end)
 
