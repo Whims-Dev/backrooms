@@ -264,15 +264,23 @@ local DeepwokenInfo = {
                 if (RootPart ~= nil) then
 					if (not Options.ShowInteractable.Value) then RootPart = nil end
                     pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, v.Name, Color3.new(1, 1, 0.5));
+				elseif (v.Name == "WindrunnerOrb") then
+					local entry = v;
+					if (not Options.ShowJSOrbs.Value) then entry = nil end
+                    pcall(RenderList.AddOrUpdateInstance, RenderList, v, entry, "Jetstriker Beacon", Color3.new(0.694117, 1, 0.933333));
                 end
             end
         end
-        if (workspace:FindFirstChild('DepthsWhirlpool')) then
+        if (workspace:FindFirstChild('DepthsWhirlpool')) or (workspace:FindFirstChild('WindrunnerOrb')) then
             for i, v in pairs(workspace:GetChildren()) do
                 if (v:IsA("Model")) and (v.Name == "DepthsWhirlpool") then
 					local Center = v:FindFirstChild("Center");
 					if (not Options.ShowWhirlpools.Value) then Center = nil end
                     pcall(RenderList.AddOrUpdateInstance, RenderList, v, Center, "Whirlpool", Color3.new(0.5, 0.5, 1));
+				elseif (v.Name == "WindrunnerOrb") then
+					local entry = v;
+					if (not Options.ShowJSOrbs.Value) then entry = nil end
+                    pcall(RenderList.AddOrUpdateInstance, RenderList, v, entry, "Jetstriker Beacon", Color3.new(0.694117, 1, 0.933333));
                 end
             end
         end
@@ -335,6 +343,7 @@ local DeepwokenInfo = {
 		{'ShowMobs', 'Show Mobs', true},
 		{'ShowInteractable', 'Show Interactable', true},
 		{'ShowWhirlpools', 'Show Whirlpools', true},
+		{'ShowJSOrbs', 'Show Jetstriker Orbs', true},
 		{'ShowChests', 'Show Chests', true},
 	};
 };
@@ -2213,7 +2222,8 @@ local function Update()
 					end)
 					shared.InstanceData[i] = nil;
 				else
-					if v.Instance == nil or v.Instance.Parent == nil or (RenderList.Instances[v.Base] and RenderList.Instances[v.Base].Instance == nil) then
+					if v.Instance == nil or v.Instance.Parent == nil or (RenderList.Instances[v.Base] and RenderList.Instances[v.Base].Instance == nil) or (not v.Instance:IsDescendantOf(workspace)) then
+						v.DontDelete = false
 						GetTableData(v.Instances)(function(i, obj)
 							obj.Visible = false;
 							obj:Remove();
