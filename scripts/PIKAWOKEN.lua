@@ -439,6 +439,7 @@ local function GetClosestToScreenPoint(ScreenPoint)
 		for _, e in pairs(EntityFolder:GetChildren()) do
 			if (e:IsA("Model")) and (e.Name:match("Vampire")) then
 				Parent = EntityFolder;
+				break;
 			end
 		end
 	end
