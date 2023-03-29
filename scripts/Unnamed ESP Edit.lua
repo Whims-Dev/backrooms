@@ -242,6 +242,22 @@ local Options = setmetatable({}, {
 
 local ActiveWorldMarkers = {};
 
+local ActiveProcessed = {}
+local function ForEachChild(Setting, List, Func)
+	if (not ActiveProcessed[Setting]) then
+		ActiveProcessed[Setting] = {}
+	end
+	if (Options[Setting].Value) then
+		for _, v in pairs(List) do
+			
+		end
+	else
+		for i, v in pairs(ActiveProcessed[Setting]) do
+			pcall(RenderList.AddOrUpdateInstance, RenderList, i, v, "Unloading...", Color3.new(0, 0, 0));
+		end
+	end
+end
+
 local DeepwokenInfo = {
     CustomESP = function()
         for _, v in pairs(workspace:GetChildren()) do
@@ -483,10 +499,8 @@ local Modules = {
 			local cTool = Player.Character:FindFirstChildWhichIsA("Tool")
 			if (cTool ~= nil) then
 				table.insert(Inventory, cTool.Name)
-			else
-				table.insert(Inventory, "Nothing")
 			end
-			return "\n[".. table.concat(Inventory, "-") .."]"
+			return (#Inventory > 0) and ("\n[".. table.concat(Inventory, "-") .."]") or ""
 		end,
 		MoreOptions = {
 			{'epShowWeapon', 'Show Held Weapon', true},
