@@ -442,7 +442,7 @@ local Modules = {
 			{'ShowPickupsWAL', 'Show Pickups', true},
 		};
 	},
-	[504234221] = {
+	[504234221] = { -- Vampire Hunters 3
 		CustomPlayerTag = function(Player)
 			local Role = "";
 			if (Player.Backpack:FindFirstChild("Gun")) or (Player.Character:FindFirstChild("Gun", true)) then
@@ -495,15 +495,20 @@ local Modules = {
 	},
 	[3809673475] = {
 		CustomPlayerTag = function(Player)
-			local Inventory = {};
-			local cTool = Player.Character:FindFirstChildWhichIsA("Tool")
-			if (cTool ~= nil) then
-				table.insert(Inventory, cTool.Name)
+			local Character = Player.Character;
+			local Status = {};
+			local cTool = Character:FindFirstChildWhichIsA("Tool")
+			if (cTool ~= nil) and (Options.epShowWeapon.Value) then
+				table.insert(Status, cTool.Name)
 			end
-			return (#Inventory > 0) and ("\n[".. table.concat(Inventory, "-") .."]") or ""
+			if (Character:FindFirstChild("CanBeKilled")) and (Options.epShowHostile.Value) then
+				table.insert(Status, "Hostile")
+			end
+			return (#Status > 0) and ("\n[".. table.concat(Status, " | ") .."]") or ""
 		end,
 		MoreOptions = {
 			{'epShowWeapon', 'Show Held Weapon', true},
+			{'epShowHostile', 'Show Hostile', true},
 		};
 	}
 };
