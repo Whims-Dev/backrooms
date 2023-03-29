@@ -410,10 +410,9 @@ Universal.Toggle("Noclip", false, function(value)
 		end
 	end
 end)
-local ActiveAimbot = nil;
 local aimbotInfo = Universal.Toggle("Aimbot", false, function(value)
-	if (not value) and (ActiveAimbot) then
-		ActiveAimbot:Disconnect()
+	if (not value)then
+		DestroyConnection("ActiveAimbot")
 	end
 end)
 local aimbotIgnoreTeam = Universal.Toggle("Ignore Team", true)
@@ -893,11 +892,15 @@ local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
 		main.Visible = not main.Visible;
 	elseif (input.UserInputType == Enum.UserInputType.MouseButton2) and (aimbotInfo.value) then
 		local OffsetTimer, Offset, AimName = 0, Vector3.new(), "Head";
-		ActiveAimbot = RunService.Heartbeat:Connect(function(dt)
+		MakeConnection("ActiveAimbot", RunService.Heartbeat:Connect(function(dt)
 			local AimEntity = GetClosestToScreenPoint(Vector2.new(Mouse.X, Mouse.Y));
 			if (AimEntity ~= nil) then
 				local AimPart = AimEntity:FindFirstChild(AimName) or AimEntity:FindFirstChild("Head") or AimEntity:FindFirstChild("Torso");
 				if (AimPart ~= nil) then
+					if (game.GameId == 3809673475) then
+						local distanceMultiplier = ((Player.Character.HumanoidRootPart.Position - AimPart.Position).Magnitude / 100);
+						Offset = ((AimPart.Parent.HumanoidRootPart.Velocity/12) * distanceMultiplier) + Vector3.new(0, distanceMultiplier/3, 0)
+					end
 					Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, AimPart.Position + Offset), aimbotSmoothingInfo.value/10)
 				end
 			end
@@ -911,15 +914,13 @@ local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
                 end
 				OffsetTimer = math.random(5, 30)/100;
 			end
-		end)
+		end))
 	end
 end)
 
 local InputEnded = UserInputService.InputEnded:Connect(function(input)
 	if (input.UserInputType == Enum.UserInputType.MouseButton2) then
-		if (ActiveAimbot) then
-			ActiveAimbot:Disconnect()
-		end
+		DestroyConnection("ActiveAimbot")
 	end
 end)
 
@@ -936,7 +937,6 @@ shared.PikaHubDisconnect = function()
 	for i, v in pairs(Connections) do
 		v:Disconnect()
 	end
-	if (ActiveAimbot) then ActiveAimbot:Disconnect() end
 	if (sanityMeter) then sanityMeter:Destroy() end
 	if (shared.flyinput) then shared.flyinput:Disconnect() end
 	if (shared.FlyHandler) then shared.FlyHandler:Disconnect() end
