@@ -443,13 +443,22 @@ local function GetClosestToScreenPoint(ScreenPoint)
 			end
 		end
 	end
+	local teamsToIgnore = { Player.Team.Name };
+	if (game.GameId == 3809673475) then
+		local Criminals = {"Fugitive", "Prisoners"}
+		if (table.find(Criminals, Player.Team.Name)) then
+			for _, t in pairs(Criminals) do
+				table.insert(teamsToIgnore, t)
+			end
+		end
+	end
 	for _, e in pairs(Parent:GetChildren()) do
 		if (e == Player.Character) then continue end
 		local hum: Humanoid = e:FindFirstChildWhichIsA("Humanoid");
 		local head: BasePart = e:FindFirstChild("Head");
         if (aimbotIgnoreTeam.value) then
             local player = Players:GetPlayerFromCharacter(e);
-            if (player ~= nil) and (Player.Team == player.Team) then
+            if (player ~= nil) and (table.find(teamsToIgnore, player.Team.Name)) then
                 continue
             end
         end
