@@ -256,7 +256,7 @@ local DeepwokenInfo = {
 					local Label = Sign:FindFirstChild("TextLabel", true)
 					if (Label ~= nil) then
 						if (not Options.GuildBases.Value) then Sign = nil end
-						pcall(RenderList.AddOrUpdateInstance, RenderList, v, Sign, ("Guild Base [%s]"):format(Label.Text), Color3.new(0.694117, 1, 0.933333));
+						pcall(RenderList.AddOrUpdateInstance, RenderList, v, Sign, ("Guild Base [%s]"):format(Label.Text), Color3.new(0.450980, 0.250980, 1));
 					end
 				end
 			elseif (v.Name == "Live") then
