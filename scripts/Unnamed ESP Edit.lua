@@ -4,6 +4,7 @@ if not syn and not PROTOSMASHER_LOADED then print'Unnamed ESP only officially su
 
 if not cloneref then cloneref = function(o) return o end end
 
+local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local UserInputService = cloneref(game:GetService'UserInputService')
 local HttpService = cloneref(game:GetService'HttpService')
 local TweenService = cloneref(game:GetService'TweenService')
@@ -239,6 +240,8 @@ local Options = setmetatable({}, {
 	end;
 })
 
+local ActiveWorldMarkers = {};
+
 local DeepwokenInfo = {
     CustomESP = function()
         for _, v in pairs(workspace:GetChildren()) do
@@ -303,6 +306,20 @@ local DeepwokenInfo = {
 				end
 			end
         end
+		if (Options.dwWorldLocations.Value) and (ReplicatedStorage:FindFirstChild("MarkerWorkspace")) and (ReplicatedStorage.MarkerWorkspace:FindFirstChild("AreaMarkers")) then
+			for _, f in pairs(ReplicatedStorage.MarkerWorkspace.AreaMarkers:GetChildren()) do
+				local marker = f:FindFirstChild("AreaMarker")
+				if (ActiveWorldMarkers[f] ~= marker) then
+					ActiveWorldMarkers[f] = marker;
+				end
+				pcall(RenderList.AddOrUpdateInstance, RenderList, f, marker, f.Name, Color3.new(0, 0.317647, 1));
+			end
+		else
+			for f, v in pairs(ActiveWorldMarkers) do
+				pcall(RenderList.AddOrUpdateInstance, RenderList, f, nil, "Despawning...", Color3.new(0, 0, 0));
+				ActiveWorldMarkers[f] = nil;
+			end
+		end
     end;
     CustomPlayerTag = function(Player)
         local Name = '';
@@ -356,6 +373,7 @@ local DeepwokenInfo = {
 		{'ShowChests', 'Show Chests', true},
 		{'DeathBags', 'Show Death Bags', true},
 		{'GuildBases', "Show Guild Bases", true},
+		{'dwWorldLocations', "Show World Locations", true}
 	};
 };
 
@@ -1322,7 +1340,7 @@ function CreateMenu(NewPosition) -- Create Menu
 	local BaseSize = V2New(300, 625);
 	if (Module ~= nil) and (Module.MoreOptions) then
 		for i = 1, #Module.MoreOptions do
-			BaseSize = V2New(300, BaseSize.Y + 30)
+			BaseSize = V2New(300, BaseSize.Y + 25)
 		end
 	end
 	local BasePosition = NewPosition or V2New(Camera.ViewportSize.X / 8 - (BaseSize.X / 2), Camera.ViewportSize.Y / 2 - (BaseSize.Y / 2));
