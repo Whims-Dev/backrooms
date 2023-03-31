@@ -240,99 +240,90 @@ local Options = setmetatable({}, {
 	end;
 })
 
-local ActiveWorldMarkers = {};
-
-local ActiveProcessed = {}
-local function ForEachChild(Setting, List, Func)
-	if (not ActiveProcessed[Setting]) then
-		ActiveProcessed[Setting] = {}
+local function load(parent, array, check)
+	local check = check or function() end;
+	local function new(v)
+		if (check(v)) and (not table.find(array, v)) then
+			table.insert(array, v)
+			v.AncestryChanged:Connect(function()
+				local index = table.find(array, v);
+				if (not v:IsDescendantOf(parent)) and (index) then
+					table.remove(array, index)
+				end
+			end)
+		end
 	end
-	if (Options[Setting].Value) then
-		for _, v in pairs(List) do
-			
-		end
-	else
-		for i, v in pairs(ActiveProcessed[Setting]) do
-			pcall(RenderList.AddOrUpdateInstance, RenderList, i, v, "Unloading...", Color3.new(0, 0, 0));
-		end
+	parent.ChildAdded:Connect(new)
+	for _, v in pairs(parent:GetChildren()) do
+		task.spawn(new, v)
 	end
 end
 
+local ActiveWorldMarkers = {};
+local LiveNPCs, NPCs, Thrown, Workspaced = {}, {}, {}, {};
+local dwColors = {
+	jsBeacon = Color3.new(0.694117, 1, 0.933333),
+	Interactable = Color3.new(1, 1, 0.5),
+};
+
 local DeepwokenInfo = {
     CustomESP = function()
-        for _, v in pairs(workspace:GetChildren()) do
-            if (v:IsA("Model")) and (v.Name == "DepthsWhirlpool") then
-				local Center = v:FindFirstChild("Center");
-				if (not Options.ShowWhirlpools.Value) then Center = nil end
-                pcall(RenderList.AddOrUpdateInstance, RenderList, v, Center, "Whirlpool", Color3.new(0.5, 0.5, 1));
+		for _, v in pairs(Workspaced) do
+			if (v.Name == "DepthsWhirlpool") then
+				local Center = Options.ShowWhirlpools.Value and v:FindFirstChild("Center") or nil;
+				RenderList:AddOrUpdateInstance(v, Center, "Whirlpool", Color3.new(0.5, 0.5, 1))
 			elseif (v.Name == "WindrunnerOrb") then
-				local entry = v;
-				if (not Options.ShowJSOrbs.Value) then entry = nil end
-                pcall(RenderList.AddOrUpdateInstance, RenderList, v, entry, "Jetstriker Beacon", Color3.new(0.694117, 1, 0.933333));
+				local entry = Options.ShowJSOrbs.Value and v or nil;
+                RenderList:AddOrUpdateInstance(v, entry, "Jetstriker Beacon", dwColors.jsBeacon);
 			elseif (v.Name:match("GuildDoor_")) then
-				local Sign = v:FindFirstChild("Sign", true)
+				local Sign, Text = Options.GuildBases.Value and v:FindFirstChild("Sign", true) or nil, "";
 				if (Sign ~= nil) then
 					local Label = Sign:FindFirstChild("TextLabel", true)
 					if (Label ~= nil) then
-						if (not Options.GuildBases.Value) then Sign = nil end
-						pcall(RenderList.AddOrUpdateInstance, RenderList, v, Sign, ("Guild Base [%s]"):format(Label.Text), Color3.new(0.450980, 0.250980, 1));
+						Text = Label.Text
 					end
 				end
-			elseif (v.Name == "Live") then
-				for i, v in pairs(v:GetChildren()) do
-					local plr = Players:GetPlayerFromCharacter(v);
-					if (plr) then continue end
-					local RootPart = v:FindFirstChild("HumanoidRootPart")
-					local Humanoid = v:FindFirstChild("Humanoid")
-					if (RootPart ~= nil) and (Humanoid ~= nil) then
-						local Percent = (Humanoid.Health/Humanoid.MaxHealth)
-						local Name = string.lower(v.Name:gsub("%d+", "")):gsub("_", " ")
-						if (Name:sub(1, 1) == ".") then
-							Name = string.sub(Name, 2);
-						end
-						if (not Options.ShowMobs.Value) then RootPart = nil end
-						pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, string.format('%s\n[%s/%s]', GrammaticallyCorrect(Name), Round(Humanoid.Health), Humanoid.MaxHealth), Color3.new(1-Percent, Percent, 0));
-					end
-				end
-			elseif (v.Name == "NPCs") then
-				for i, v in pairs(v:GetChildren()) do
-					local RootPart = v:FindFirstChild("HumanoidRootPart")
-					if (RootPart ~= nil) then
-						if (not Options.ShowInteractable.Value) then RootPart = nil end
-						pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, v.Name, Color3.new(1, 1, 0.5));
-					elseif (v.Name == "WindrunnerOrb") then
-						local entry = v;
-						if (not Options.ShowJSOrbs.Value) then entry = nil end
-						pcall(RenderList.AddOrUpdateInstance, RenderList, v, entry, "Jetstriker Beacon", Color3.new(0.694117, 1, 0.933333));
-					end
-				end
-			elseif (v.Name == "Thrown") then
-				for i, v in pairs(v:GetChildren()) do
-					if (v:IsA("Model")) and (v.Name == "Model") and (v:FindFirstChild("Lid")) then
-						local RootPart = v:FindFirstChild("RootPart")
-						if (RootPart ~= nil) then
-							if (not Options.ShowChests.Value) then RootPart = nil end
-							pcall(RenderList.AddOrUpdateInstance, RenderList, v, RootPart, "Chest", Color3.new(1, 0.5, 1));
-						end
-					elseif (v:IsA("MeshPart")) and (v.Name == "BagDrop") then
-						local bag = v;
-						if (not Options.DeathBags.Value) then bag = nil end
-						pcall(RenderList.AddOrUpdateInstance, RenderList, v, bag, "Death Bag", Color3.new(0.305882, 0.149019, 0));
-					end
-				end
+				RenderList:AddOrUpdateInstance(v, Sign, ("Guild Base [%s]"):format(Text), Color3.new(0.450980, 0.250980, 1));
 			end
-        end
+		end
+		for _, v in pairs(Thrown) do
+			if (v.Name == "Model") and (v:FindFirstChild("Lid")) then
+				local RootPart = v:FindFirstChild("RootPart")
+				RenderList:AddOrUpdateInstance(v, RootPart, "Chest", Color3.new(1, 0.5, 1))
+			elseif (v.Name == "BagDrop") then
+				RenderList:AddOrUpdateInstance(v, Options.DeathBags.Value and v or nil, "Death Bag", Color3.new(0.305882, 0.149019, 0));
+			end
+		end
+		for _, v in pairs(NPCs) do
+			local RootPart, entry = Options.ShowInteractable.Value and v:FindFirstChild("HumanoidRootPart") or nil, Options.ShowJSOrbs.Value and v or nil;
+			local jsOrb = (v.Name == "WindrunnerOrb")
+			RenderList:AddOrUpdateInstance(v, jsOrb and entry or RootPart, jsOrb and "Jetstriker Beacon" or v.Name, jsOrb and dwColors.jsBeacon or dwColors.Interactable)
+		end
+		for _, v in pairs(LiveNPCs) do
+			local Name = string.lower(v.Name:gsub("%d+", "")):gsub("_", " ")
+			if (Name:sub(1, 1) == ".") then
+				Name = string.sub(Name, 2);
+			end
+			local RootPart = Options.ShowMobs.Value and v:FindFirstChild("HumanoidRootPart") or nil;
+			local Humanoid = v:FindFirstChild("Humanoid")
+			local Health, MaxHealth, Percent = 0, 0, 0;
+			if (Humanoid ~= nil) then
+				Health, MaxHealth = Humanoid.Health, Humanoid.MaxHealth;
+				Percent = (Health/MaxHealth)
+			end
+			RenderList:AddOrUpdateInstance(v, RootPart, string.format('%s\n[%s/%s]', GrammaticallyCorrect(Name), Round(Health), MaxHealth), Color3.new(1-Percent, Percent, 0))
+		end
 		if (Options.dwWorldLocations.Value) and (ReplicatedStorage:FindFirstChild("MarkerWorkspace")) and (ReplicatedStorage.MarkerWorkspace:FindFirstChild("AreaMarkers")) then
 			for _, f in pairs(ReplicatedStorage.MarkerWorkspace.AreaMarkers:GetChildren()) do
 				local marker = f:FindFirstChild("AreaMarker")
 				if (ActiveWorldMarkers[f] ~= marker) then
 					ActiveWorldMarkers[f] = marker;
 				end
-				pcall(RenderList.AddOrUpdateInstance, RenderList, f, marker, f.Name, Color3.new(0, 0.317647, 1));
+				RenderList:AddOrUpdateInstance(f, marker, f.Name, Color3.new(0, 0.317647, 1))
 			end
 		else
-			for f, v in pairs(ActiveWorldMarkers) do
-				pcall(RenderList.AddOrUpdateInstance, RenderList, f, nil, "Despawning...", Color3.new(0, 0, 0));
+			for f in pairs(ActiveWorldMarkers) do
+				RenderList:AddOrUpdateInstance(f, nil, "Despawning...", Color3.new(0, 0, 0));
 				ActiveWorldMarkers[f] = nil;
 			end
 		end
@@ -346,13 +337,8 @@ local DeepwokenInfo = {
             local Extra = {};
             if Character then
 				local PointsInvested = -10;
-				local Attunementless = true;
 				for i, v in pairs(Character:GetAttributes()) do
 					if (i:sub(1, 5) == "Stat_") then
-						--if (i:sub(6, 12) == "Element") and (v > 0) then
-						--	Attunementless = false
-						--	PointsInvested -= 10
-						--end
 						PointsInvested += v;
 					end
 				end
@@ -381,6 +367,25 @@ local DeepwokenInfo = {
         end
         return Name;
     end;
+	Initialize = function()
+		local live = workspace:WaitForChild("Live")
+		local npcs = workspace:WaitForChild("NPCs")
+		local thrown = workspace:WaitForChild("Thrown")
+		load(live, LiveNPCs, function(v)
+			return not Players:GetPlayerFromCharacter(v);
+		end)
+		load(npcs, NPCs)
+		load(thrown, Thrown, function(v)
+			if ((v:IsA("Model")) and (v.Name == "Model") and (v:FindFirstChild("Lid"))) or ((v:IsA("MeshPart")) and (v.Name == "BagDrop")) then
+				return true
+			end
+		end)
+		load(workspace, Workspaced, function(v)
+			if ((v:IsA("Model")) and (v.Name == "DepthsWhirlpool")) or (v.Name == "WindrunnerOrb") or (v.Name:match("GuildDoor_")) then
+				return true
+			end
+		end)
+	end;
 	MoreOptions = {
 		{'ShowMobs', 'Show Mobs', true},
 		{'ShowInteractable', 'Show Interactable', true},
