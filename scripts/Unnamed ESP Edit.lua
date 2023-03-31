@@ -241,7 +241,7 @@ local Options = setmetatable({}, {
 })
 
 local function load(parent, array, check)
-	local check = check or function() end;
+	local check = check or function() return true end;
 	local function new(v)
 		if (check(v)) and (not table.find(array, v)) then
 			table.insert(array, v)
