@@ -289,7 +289,7 @@ local DeepwokenInfo = {
 		for _, v in pairs(Thrown) do
 			if (v.Name == "Model") and (v:FindFirstChild("Lid")) then
 				local RootPart = v:FindFirstChild("RootPart")
-				RenderList:AddOrUpdateInstance(v, RootPart, "Chest", Color3.new(1, 0.5, 1))
+				RenderList:AddOrUpdateInstance(v, Options.DeathBags.Value and RootPart or nil, "Chest", Color3.new(1, 0.5, 1))
 			elseif (v.Name == "BagDrop") then
 				RenderList:AddOrUpdateInstance(v, Options.DeathBags.Value and v or nil, "Death Bag", Color3.new(0.305882, 0.149019, 0));
 			end
