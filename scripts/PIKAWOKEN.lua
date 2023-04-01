@@ -279,7 +279,7 @@ local function NewSection(Section)
 		return info, number, controller;
 	end
 	function Create.String(Text, Default, Callback)
-		local Default = (tonumber(Default) or "");
+		local Default = Default or "";
 		local info = { value = Default };
 		local number = Instance.new("Frame")
 		number.Name = "Number"
@@ -305,15 +305,17 @@ local function NewSection(Section)
 		Padding(button, 0.17, 0.05, 0.05, 0.17)
 		button.Parent = number
 		number.Parent = container;
-		local controller = button.FocusLost:Connect(function()
-			info.value = button.Text;
+		local function update(input)
+			info.value = input;
+			button.Text = info.value;
 			if (Callback ~= nil) then
 				Callback(info.value);
 			end
-		end)
-		if (Callback ~= nil) then
-			Callback(info.value);
 		end
+		local controller = button.FocusLost:Connect(function()
+			update(button.Text)
+		end)
+		update(info.value)
 		return info, number, controller;
 	end
 	function Create.Toggle(Text, Default, Callback)
@@ -779,6 +781,31 @@ Deepwoken.Toggle("Custom Voices", false, function(value)
 		if (shared.CharacterAddedDsounds) then
 			shared.CharacterAddedDsounds:Disconnect()
 		end
+	end
+end)
+local dwCombatMusic = Deepwoken.String("Combat Music", "combat.ogg")
+local dwCombatVolume = Deepwoken.Number("Combat Volume", 0.5)
+local dwAmbientMusic = Deepwoken.String("Ambient Music", "ambient.ogg")
+local dwAmbientVolume = Deepwoken.Number("Ambient Volume", 0.2)
+Deepwoken.Toggle("Custom Music", false, function(value)
+	if (value) then
+		MakeConnection("dwCustomMusic", RunService.Heartbeat:Connect(function()
+			local PlayerGui = Player:FindFirstChild("PlayerGui")
+			if (PlayerGui) and (PlayerGui:FindFirstChild("WorldClient")) then
+				local combat = PlayerGui.WorldClient:FindFirstChild("Combat", true)
+				local ambient = PlayerGui.WorldClient:FindFirstChild("Ambient", true)
+				if (combat) then
+					combat.SoundId = getsynasset(dwCombatMusic.value)
+					combat.BaseVolume.Value = dwCombatVolume.value
+				end
+				if (ambient) then
+					ambient.SoundId = getsynasset(dwAmbientMusic.value)
+					ambient.BaseVolume.Value = dwAmbientVolume.value
+				end
+			end
+		end))
+	else
+		DestroyConnection("dwCustomMusic")
 	end
 end)
 Deepwoken.Button("Race Morph Menu", function()
