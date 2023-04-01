@@ -784,9 +784,9 @@ Deepwoken.Toggle("Custom Voices", false, function(value)
 	end
 end)
 local dwCombatMusic = Deepwoken.String("Combat Music", "combat.ogg")
-local dwCombatVolume = Deepwoken.Number("Combat Volume", 0.5)
+local dwCombatVolume = Deepwoken.Number("Combat Volume", 0.5, 0, 10)
 local dwAmbientMusic = Deepwoken.String("Ambient Music", "ambient.ogg")
-local dwAmbientVolume = Deepwoken.Number("Ambient Volume", 0.2)
+local dwAmbientVolume = Deepwoken.Number("Ambient Volume", 0.1, 0, 10)
 Deepwoken.Toggle("Custom Music", false, function(value)
 	if (value) then
 		MakeConnection("dwCustomMusic", RunService.Heartbeat:Connect(function()
