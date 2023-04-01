@@ -796,11 +796,11 @@ Deepwoken.Toggle("Custom Music", false, function(value)
 				local ambient = PlayerGui.WorldClient:FindFirstChild("Ambient", true)
 				if (combat) then
 					combat.SoundId = getsynasset(dwCombatMusic.value)
-					combat.BaseVolume.Value = dwCombatVolume.value
+					--combat.BaseVolume.Value = dwCombatVolume.value
 				end
 				if (ambient) then
 					ambient.SoundId = getsynasset(dwAmbientMusic.value)
-					ambient.BaseVolume.Value = dwAmbientVolume.value
+					--ambient.BaseVolume.Value = dwAmbientVolume.value
 				end
 			end
 		end))
