@@ -515,7 +515,41 @@ local Modules = {
 			{'epShowWeapon', 'Show Held Weapon', true},
 			{'epShowHostile', 'Show Hostile', true},
 		};
-	}
+	},
+	[2408700413] = {
+		CustomESP = function()
+			for _, v in pairs(Workspaced) do
+				if (v.Name == "Present") then
+					local part = Options.kpShowPresent.Value and v:FindFirstChild("BasePart") or nil;
+					RenderList:AddOrUpdateInstance(v, part, "Present", Color3.new(1, 0, 0));
+				elseif (v.Name == "Pinata") then
+					local part = Options.kpShowLlama.Value and v:FindFirstChild("Pinata") or nil;
+					RenderList:AddOrUpdateInstance(v, part, "Pinata", Color3.new(0.756862, 0.392156, 1));
+				end
+			end
+		end,
+		CustomPlayerTag = function(Player)
+			local Character = Player.Character;
+			local Status = {};
+			if (Character:FindFirstChild("VisualHead")) then
+				table.insert(Status, "Kaiju")
+			else
+				table.insert(Status, "Human")
+			end
+			return (#Status > 0) and ("\n[".. table.concat(Status, " | ") .."]") or ""
+		end,
+		Initialize = function()
+			load(workspace, Workspaced, function(v)
+				if (table.find({"Present", "Pinata"}, v.Name)) then
+					return true;
+				end
+			end)
+		end;
+		MoreOptions = {
+			{'kpShowPresent', 'Show Present', true},
+			{'kpShowLlama', 'Show Llama', true},
+		};
+	},
 };
 
 local Module = Modules[game.PlaceId] or Modules[game.GameId]
