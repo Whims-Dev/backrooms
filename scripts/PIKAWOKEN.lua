@@ -433,7 +433,7 @@ local function CreateViewExample(sp)
     Debris:AddItem(sg, 1)
 end
 local function GetClosestToScreenPoint(ScreenPoint)
-	local Closest, Target = 90, nil;
+	local Closest, Target = 120, nil;
 	local Parent = Player.Character.Parent;
 	if (game.GameId == 504234221) and (workspace:FindFirstChild("GameStuff")) and (workspace.GameStuff:FindFirstChild("Entities")) then
 		local EntityFolder = workspace.GameStuff.Entities;
@@ -598,13 +598,11 @@ Deepwoken.Button("Delete NPC", function()
 		Notify("Delete NPC", string.format("Successfully deleted %s!", name), 5)
 	end
 end)
-Deepwoken.Toggle("No Fog", false, function(value)
-	if (value) then
-		MakeConnection("dw No Fog", RunService.Heartbeat:Connect(function()
-			Lighting.FogEnd = 10000000
-		end))
-	else
-		DestroyConnection("dw No Fog")
+Deepwoken.Button("Give Ethiron's Gaze", function()
+	if (not Player.Backpack:FindFirstChild("Talent:Ethiron's Gaze")) then
+		local folder = Instance.new("Folder")
+		folder.Name = "Talent:Ethiron's Gaze"
+		folder.Parent = Player.Backpack
 	end
 end)
 Deepwoken.Toggle("Auto Charisma", false, function(value)
@@ -784,9 +782,7 @@ Deepwoken.Toggle("Custom Voices", false, function(value)
 	end
 end)
 local dwCombatMusic = Deepwoken.String("Combat Music", "combat.ogg")
---local dwCombatVolume = Deepwoken.Number("Combat Volume", 0.5, 0, 10)
 local dwAmbientMusic = Deepwoken.String("Ambient Music", "ambient.ogg")
---local dwAmbientVolume = Deepwoken.Number("Ambient Volume", 0.1, 0, 10)
 Deepwoken.Toggle("Custom Music", false, function(value)
 	if (value) then
 		MakeConnection("dwCustomMusic", RunService.Heartbeat:Connect(function()
@@ -796,11 +792,9 @@ Deepwoken.Toggle("Custom Music", false, function(value)
 				local ambient = PlayerGui.WorldClient:FindFirstChild("Ambient", true)
 				if (combat) then
 					combat.SoundId = getsynasset(dwCombatMusic.value)
-					--combat.BaseVolume.Value = dwCombatVolume.value
 				end
 				if (ambient) then
 					ambient.SoundId = getsynasset(dwAmbientMusic.value)
-					--ambient.BaseVolume.Value = dwAmbientVolume.value
 				end
 			end
 		end))
@@ -926,7 +920,7 @@ local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
 				if (AimPart ~= nil) then
 					if (game.GameId == 3809673475) then
 						local distanceMultiplier = ((Player.Character.HumanoidRootPart.Position - AimPart.Position).Magnitude / 100);
-						Offset = ((AimPart.Parent.HumanoidRootPart.Velocity/12) * distanceMultiplier) + Vector3.new(0, distanceMultiplier/3, 0)
+						Offset = ((AimPart.Parent.HumanoidRootPart.Velocity/5) * distanceMultiplier) + Vector3.new(0, distanceMultiplier/3, 0)
 					end
 					Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, AimPart.Position + Offset), aimbotSmoothingInfo.value/10)
 				end
