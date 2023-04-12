@@ -523,6 +523,9 @@ end)
 Universal.Button("Dawnwalker VC Visualizer", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Dawnwalker%20VC%20Visualizer.lua", true))()
 end)
+Universal.Button("Moon's Dex Explorer", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+end)
 MC.Visible = true;
 local Redwood = NewSection("Redwood Prison: Reworked")
 Redwood.Toggle("Disable Mountain Wind", false, function(value)
@@ -825,7 +828,9 @@ Deepwoken.Toggle("Custom Voices", false, function(value)
 	end
 end)
 local dwCombatMusic = Deepwoken.String("Combat Music", "combat.ogg")
+local dwCombatVolume = Deepwoken.String("Combat Volume", 0.35)
 local dwAmbientMusic = Deepwoken.String("Ambient Music", "ambient.ogg")
+local dwAmbientVolume = Deepwoken.String("Ambient Volume", 0.35)
 Deepwoken.Toggle("Custom Music", false, function(value)
 	if (value) then
 		MakeConnection("dwCustomMusic", RunService.Heartbeat:Connect(function()
@@ -835,9 +840,11 @@ Deepwoken.Toggle("Custom Music", false, function(value)
 				local ambient = PlayerGui.WorldClient:FindFirstChild("Ambient", true)
 				if (combat) then
 					combat.SoundId = getsynasset(dwCombatMusic.value)
+					combat.BaseVolume.Value = math.min(combat.BaseVolume.Value, dwCombatVolume.value)
 				end
 				if (ambient) then
 					ambient.SoundId = getsynasset(dwAmbientMusic.value)
+					ambient.BaseVolume.Value = math.min(ambient.BaseVolume.Value, dwAmbientVolume.value)
 				end
 			end
 		end))
