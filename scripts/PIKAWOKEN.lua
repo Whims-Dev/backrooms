@@ -8,6 +8,7 @@ local GroupService = game:GetService("GroupService")
 local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 local Debris = game:GetService("Debris");
+local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 local CoreGui = game.CoreGui;
 
@@ -146,7 +147,35 @@ local function MakeConnection(Name, Connection)
 	Connections[Name] = Connection;
 end
 
+local function SettingsLib(Section)
+	local settingsdoc = string.format("Settings (%s)", "Default") ..".pikahub"
+	local Library = {}
+	local function GetSettingsData(writing)
+		local exists, saved = isfile(settingsdoc), {}
+		if (exists) then
+			saved = HttpService:JSONDecode(readfile(settingsdoc))
+		end
+		if (not writing) then
+			writefile(settingsdoc, HttpService:JSONEncode(saved))
+		end
+		return saved
+	end
+	function Library.EditSetting(Setting, Value)
+		local saved = GetSettingsData(true)
+		if (not saved[Section]) then saved[Section] = {} end
+		saved[Section][Setting] = Value
+		writefile(settingsdoc, HttpService:JSONEncode(saved))
+	end
+	function Library.GetSetting(Setting)
+		local saved = GetSettingsData()
+		if (not saved[Section]) then saved[Section] = {} end
+		return saved[Section][Setting]
+	end
+	return Library
+end
+
 local function NewSection(Section)
+	local Settings = SettingsLib(Section);
 	local sectionButton = Instance.new("TextButton")
 	sectionButton.Name = "SectionButton"
 	sectionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
@@ -235,7 +264,7 @@ local function NewSection(Section)
 		return button, click;
 	end
 	function Create.Number(Text, Default, Min, Max, Callback)
-		local Default, Min, Max = (tonumber(Default) or 0), (tonumber(Min) or -math.huge), (tonumber(Max) or math.huge);
+		local Default, Min, Max = Settings.GetSetting(Text) or (tonumber(Default) or 0), (tonumber(Min) or -math.huge), (tonumber(Max) or math.huge);
 		local info = { value = Default };
 		local number = Instance.new("Frame")
 		number.Name = "Number"
@@ -267,8 +296,9 @@ local function NewSection(Section)
 			if (value ~= nil) and (value >= Min) and (value <= Max) then
 				info.value, lastValue = value, value;
 				if (Callback ~= nil) then
-					Callback(value);
+					task.spawn(Callback, value);
 				end
+				Settings.EditSetting(Text, info.value)
 			else
 				button.Text = lastValue;
 			end
@@ -279,7 +309,7 @@ local function NewSection(Section)
 		return info, number, controller;
 	end
 	function Create.String(Text, Default, Callback)
-		local Default = Default or "";
+		local Default = Settings.GetSetting(Text) or Default or "";
 		local info = { value = Default };
 		local number = Instance.new("Frame")
 		number.Name = "Number"
@@ -309,8 +339,9 @@ local function NewSection(Section)
 			info.value = input;
 			button.Text = info.value;
 			if (Callback ~= nil) then
-				Callback(info.value);
+				task.spawn(Callback, info.value);
 			end
+			Settings.EditSetting(Text, info.value)
 		end
 		local controller = button.FocusLost:Connect(function()
 			update(button.Text)
@@ -319,7 +350,7 @@ local function NewSection(Section)
 		return info, number, controller;
 	end
 	function Create.Toggle(Text, Default, Callback)
-		local info = { value = Default };
+		local info = { value = Settings.GetSetting(Text) or Default };
 		local toggle = Instance.new("Frame")
 		toggle.Name = "Toggle"
 		toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -357,10 +388,11 @@ local function NewSection(Section)
 			frame.BackgroundColor3 = (value and Color3.new(0, 1, 0) or Color3.new(1, 0, 0))
 			info.value = value;
 			if (Callback ~= nil) then
-				Callback(info.value);
+				task.spawn(Callback, info.value);
 			end
+			Settings.EditSetting(Text, info.value)
 		end
-		NewValue(Default)
+		NewValue(info.value)
 		local controller = button.MouseButton1Click:Connect(function()
 			NewValue(not info.value)
 		end)
@@ -598,6 +630,16 @@ Deepwoken.Button("Delete NPC", function()
 		Notify("Delete NPC", string.format("Successfully deleted %s!", name), 5)
 	end
 end)
+Deepwoken.Toggle("No Fog", false, function(value)
+	if (value) then
+		MakeConnection("dw No Fog", RunService.Heartbeat:Connect(function()
+			Lighting.FogEnd = 10000000
+		end))
+	else
+		DestroyConnection("dw No Fog")
+	end
+end)
+--[[
 Deepwoken.Button("Give Ethiron's Gaze", function()
 	if (not Player.Backpack:FindFirstChild("Talent:Ethiron's Gaze")) then
 		local folder = Instance.new("Folder")
@@ -605,6 +647,7 @@ Deepwoken.Button("Give Ethiron's Gaze", function()
 		folder.Parent = Player.Backpack
 	end
 end)
+--]]
 Deepwoken.Toggle("Auto Charisma", false, function(value)
 	if (value) then
 		local Bindable; do
