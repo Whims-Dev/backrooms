@@ -290,9 +290,9 @@ local function NewSection(Section)
 		image.Parent = button1
 		button1.Parent = button
 		button.Parent = container;
+		sectionData[Text] = info
 		local click;
 		if (Callback ~= nil) then
-			sectionData[button1] = info
 			click = button1.MouseButton1Click:Connect(Callback)
 		end
 		return button, click;
@@ -337,7 +337,7 @@ local function NewSection(Section)
 			end
 			button.Text = lastValue;
 		end
-		sectionData[button] = info
+		sectionData[Text] = info
 		local controller = button.FocusLost:Connect(function()
 			info.internalcallback(button.Text)
 		end)
@@ -386,7 +386,7 @@ local function NewSection(Section)
 			info.internalcallback(button.Text)
 		end)
 		info.internalcallback(info.value)
-		sectionData[button] = info
+		sectionData[Text] = info
 		return info, number, controller;
 	end
 	function Create.Toggle(Text, Default, Callback)
@@ -437,7 +437,7 @@ local function NewSection(Section)
 		local controller = button.MouseButton1Click:Connect(function()
 			info.internalcallback(not info.value)
 		end)
-		sectionData[button] = info
+		sectionData[Text] = info
 		return info, toggle, controller;
 	end
 	return Create, container;
