@@ -376,7 +376,7 @@ local DeepwokenInfo = {
 		end)
 		load(npcs, NPCs)
 		load(thrown, Thrown, function(v)
-			if (v:IsA("Model")) and (v.Name == "Model") and (v:FindFirstChild("Lid")) then
+			if (v:IsA("Model")) and (v.Name == "Model") then
 				return true
 			end
 			if (v:IsA("MeshPart")) and (v.Name == "BagDrop") then
