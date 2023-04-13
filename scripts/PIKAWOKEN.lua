@@ -16,6 +16,8 @@ local Player = Players.LocalPlayer;
 local Mouse = Player:GetMouse()
 local Camera = workspace.CurrentCamera;
 
+local SectionsData = {}
+
 local function Notify(Title, Text, Duration)
 	StarterGui:SetCore("SendNotification", {Title=Title, Text=Text, Duration=(Duration or 5), Button1="OK"})
 end
@@ -147,10 +149,10 @@ local function MakeConnection(Name, Connection)
 	Connections[Name] = Connection;
 end
 
-local function SettingsLib(Section)
-	local settingsdoc = string.format("Settings (%s)", "Default") ..".pikahub"
-	local Library = {}
-	local function GetSettingsData(writing)
+local function SettingsLibrary()
+	local Library, Current = {}, {}
+	local settingsdoc = "Settings.pikahub"
+	local function GetConfigs()
 		local exists, saved = isfile(settingsdoc), {}
 		if (exists) then
 			saved = HttpService:JSONDecode(readfile(settingsdoc))
@@ -160,21 +162,49 @@ local function SettingsLib(Section)
 		end
 		return saved
 	end
-	function Library.EditSetting(Setting, Value)
-		local saved = GetSettingsData(true)
-		if (not saved[Section]) then saved[Section] = {} end
-		saved[Section][Setting] = Value
+	function Library.new(Section)
+		local Library = {}
+		local SectionSettings = {}
+		Current[Section] = SectionSettings
+		function Library.EditSetting(Setting, Value)
+			SectionSettings[Setting] = Value
+		end
+		function Library.GetSetting(Setting)
+			return SectionSettings[Setting]
+		end
+		return Library
+	end
+	function Library.save(name)
+		local saved = GetConfigs()
+		saved[name] = Current
 		writefile(settingsdoc, HttpService:JSONEncode(saved))
 	end
-	function Library.GetSetting(Setting)
-		local saved = GetSettingsData()
-		if (not saved[Section]) then saved[Section] = {} end
-		return saved[Section][Setting]
+	function Library.load(name)
+		local saved = GetConfigs()
+		if (saved[name]) then
+			for s, data in pairs(saved[name]) do
+				local section = SectionsData[s]
+				for name, value in pairs(data) do
+					local info = section[name]
+					if (info) and (info.internalcallback) then
+						info.internalcallback(value)
+					end
+				end
+			end
+			Notify("Configuration loaded", string.format("\"%s\" loaded!", name), math.huge)
+		else
+			Notify("Load failed", string.format("\"%s\" doesn't exist.", name), math.huge)
+		end
 	end
 	return Library
 end
 
+local SettingsLibrary = SettingsLibrary()
+local SettingsLib = SettingsLibrary.new;
+
 local function NewSection(Section)
+	local sectionData = {};
+	SectionsData[Section] = sectionData;
 	local Settings = SettingsLib(Section);
 	local sectionButton = Instance.new("TextButton")
 	sectionButton.Name = "SectionButton"
@@ -226,6 +256,7 @@ local function NewSection(Section)
 	Padding(sectionButton, 0.1, 0.1, 0.1, 0.1)
 	local Create = {}
 	function Create.Button(Text, Callback)
+		local info = { internalcallback = Callback }
 		local button = Instance.new("Frame")
 		button.Name = "Button"
 		button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -233,6 +264,7 @@ local function NewSection(Section)
 		button.BorderSizePixel = 0
 		button.Size = UDim2.new(1, 0, 0, 50)
 		FeatureText(button, Text)
+		info.type = button.Name
 		local button1 = Instance.new("TextButton")
 		button1.Name = "Button"
 		button1.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
@@ -259,12 +291,13 @@ local function NewSection(Section)
 		button.Parent = container;
 		local click;
 		if (Callback ~= nil) then
+			sectionData[button1] = info
 			click = button1.MouseButton1Click:Connect(Callback)
 		end
 		return button, click;
 	end
 	function Create.Number(Text, Default, Min, Max, Callback)
-		local Default, Min, Max = Settings.GetSetting(Text) or (tonumber(Default) or 0), (tonumber(Min) or -math.huge), (tonumber(Max) or math.huge);
+		local Default, Min, Max = (tonumber(Default) or 0), (tonumber(Min) or -math.huge), (tonumber(Max) or math.huge);
 		local info = { value = Default };
 		local number = Instance.new("Frame")
 		number.Name = "Number"
@@ -273,6 +306,7 @@ local function NewSection(Section)
 		number.BorderSizePixel = 0
 		number.Size = UDim2.new(1, 0, 0, 50)
 		FeatureText(number, Text)
+		info.type = number.Name
 		local button = Instance.new("TextBox")
 		button.Name = "Button"
 		button.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
@@ -291,17 +325,20 @@ local function NewSection(Section)
 		button.Parent = number
 		number.Parent = container;
 		local lastValue = info.value;
-		local controller = button.FocusLost:Connect(function()
-			local value = tonumber(button.Text);
+		info.internalcallback = function(value)
+			local value = tonumber(value);
 			if (value ~= nil) and (value >= Min) and (value <= Max) then
 				info.value, lastValue = value, value;
 				if (Callback ~= nil) then
 					task.spawn(Callback, value);
 				end
 				Settings.EditSetting(Text, info.value)
-			else
-				button.Text = lastValue;
 			end
+			button.Text = lastValue;
+		end
+		sectionData[button] = info
+		local controller = button.FocusLost:Connect(function()
+			info.internalcallback(button.Text)
 		end)
 		if (Callback ~= nil) then
 			Callback(info.value);
@@ -309,7 +346,7 @@ local function NewSection(Section)
 		return info, number, controller;
 	end
 	function Create.String(Text, Default, Callback)
-		local Default = Settings.GetSetting(Text) or Default or "";
+		local Default = Default or "";
 		local info = { value = Default };
 		local number = Instance.new("Frame")
 		number.Name = "Number"
@@ -318,6 +355,7 @@ local function NewSection(Section)
 		number.BorderSizePixel = 0
 		number.Size = UDim2.new(1, 0, 0, 50)
 		FeatureText(number, Text)
+		info.type = number.Name
 		local button = Instance.new("TextBox")
 		button.Name = "Button"
 		button.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
@@ -335,7 +373,7 @@ local function NewSection(Section)
 		Padding(button, 0.17, 0.05, 0.05, 0.17)
 		button.Parent = number
 		number.Parent = container;
-		local function update(input)
+		info.internalcallback = function(input)
 			info.value = input;
 			button.Text = info.value;
 			if (Callback ~= nil) then
@@ -344,13 +382,14 @@ local function NewSection(Section)
 			Settings.EditSetting(Text, info.value)
 		end
 		local controller = button.FocusLost:Connect(function()
-			update(button.Text)
+			info.internalcallback(button.Text)
 		end)
-		update(info.value)
+		info.internalcallback(info.value)
+		sectionData[button] = info
 		return info, number, controller;
 	end
 	function Create.Toggle(Text, Default, Callback)
-		local info = { value = Settings.GetSetting(Text) or Default };
+		local info = { value = Default };
 		local toggle = Instance.new("Frame")
 		toggle.Name = "Toggle"
 		toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -358,6 +397,7 @@ local function NewSection(Section)
 		toggle.BorderSizePixel = 0
 		toggle.Size = UDim2.new(1, 0, 0, 50)
 		FeatureText(toggle, Text)
+		info.type = toggle.Name
 		local button = Instance.new("TextButton")
 		button.Name = "Button"
 		button.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
@@ -383,7 +423,7 @@ local function NewSection(Section)
 		frame.Parent = button
 		button.Parent = toggle
 		toggle.Parent = container;
-		local function NewValue(value)
+		info.internalcallback = function(value)
 			frame.Position = (value and UDim2.fromScale(0.5, 0.5) or UDim2.fromScale(0, 0.5))
 			frame.BackgroundColor3 = (value and Color3.new(0, 1, 0) or Color3.new(1, 0, 0))
 			info.value = value;
@@ -392,10 +432,11 @@ local function NewSection(Section)
 			end
 			Settings.EditSetting(Text, info.value)
 		end
-		NewValue(info.value)
+		info.internalcallback(info.value)
 		local controller = button.MouseButton1Click:Connect(function()
-			NewValue(not info.value)
+			info.internalcallback(not info.value)
 		end)
+		sectionData[button] = info
 		return info, toggle, controller;
 	end
 	return Create, container;
@@ -899,6 +940,15 @@ local antiNetInfo; antiNetInfo = VH3.Toggle("Net (1K Escape)", false, function(v
 	else
 		DestroyConnection("VH3_1knetescape")
 	end
+end)
+
+local Config = NewSection("Configuration")
+local configInfo = Config.String("Config Name", "")
+Config.Button("Save", function()
+	SettingsLibrary.save(configInfo.value)
+end)
+Config.Button("Load", function()
+	SettingsLibrary.load(configInfo.value)
 end)
 
 local function TEclone(part, dt)
