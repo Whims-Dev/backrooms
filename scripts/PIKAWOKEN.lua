@@ -178,6 +178,7 @@ local function SettingsLibrary()
 		local saved = GetConfigs()
 		saved[name] = Current
 		writefile(settingsdoc, HttpService:JSONEncode(saved))
+		Notify("Configuration saved", string.format("\"%s\" saved!", name), math.huge)
 	end
 	function Library.load(name)
 		local saved = GetConfigs()
