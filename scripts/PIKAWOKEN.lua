@@ -1021,7 +1021,7 @@ local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
 				if (AimPart ~= nil) then
 					if (game.GameId == 3809673475) then
 						local distanceMultiplier = ((Player.Character.HumanoidRootPart.Position - AimPart.Position).Magnitude / 100);
-						Offset = ((AimPart.Parent.HumanoidRootPart.Velocity/5) * distanceMultiplier) + Vector3.new(0, distanceMultiplier/3, 0)
+						Offset = ((AimPart.Parent.HumanoidRootPart.Velocity/12) * distanceMultiplier) + Vector3.new(0, distanceMultiplier/3, 0)
 					end
 					Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, AimPart.Position + Offset), aimbotSmoothingInfo.value/10)
 				end
