@@ -288,10 +288,11 @@ local DeepwokenInfo = {
 		end
 		for _, v in pairs(Thrown) do
 			if (v.Name == "Model") and (v:FindFirstChild("Lid")) then
-				local RootPart = v:FindFirstChild("RootPart")
-				RenderList:AddOrUpdateInstance(v, Options.ShowChests.Value and RootPart or nil, "Chest", Color3.new(1, 0.5, 1))
+				RenderList:AddOrUpdateInstance(v, Options.ShowChests.Value and v:FindFirstChild("RootPart") or nil, "Chest", Color3.new(1, 0.5, 1))
 			elseif (v.Name == "BagDrop") then
 				RenderList:AddOrUpdateInstance(v, Options.DeathBags.Value and v or nil, "Death Bag", Color3.new(0.305882, 0.149019, 0));
+			elseif (v.Name == "EventFeatherRef") then
+				RenderList:AddOrUpdateInstance(v, Options.OwlFeathers.Value and v or nil, "Owl", Color3.new(0.172549, 0, 0.188235));
 			end
 		end
 		for _, v in pairs(NPCs) do
@@ -382,6 +383,9 @@ local DeepwokenInfo = {
 			if (v:IsA("MeshPart")) and (v.Name == "BagDrop") then
 				return true
 			end
+			if (v.Name == "EventFeatherRef") then
+				return true
+			end
 		end)
 		load(workspace, Workspaced, function(v)
 			if ((v:IsA("Model")) and (v.Name == "DepthsWhirlpool")) or (v.Name == "WindrunnerOrb") or (v.Name:match("GuildDoor_")) then
@@ -397,7 +401,8 @@ local DeepwokenInfo = {
 		{'ShowChests', 'Show Chests', true},
 		{'DeathBags', 'Show Death Bags', true},
 		{'GuildBases', "Show Guild Bases", true},
-		{'dwWorldLocations', "Show World Locations", true}
+		{'dwWorldLocations', "Show World Locations", true},
+		{'OwlFeathers', "Show Owl Events", true},
 	};
 };
 
