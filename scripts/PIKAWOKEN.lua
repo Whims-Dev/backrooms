@@ -40,7 +40,7 @@ end
 local function FeatureText(parent, text)
 	local feature = Instance.new("TextLabel")
 	feature.Name = "Feature"
-	feature.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+	feature.FontFace = Font.new("rbxasset://fonts/families/RobotoMono.json")
 	feature.Text = text
 	feature.TextColor3 = Color3.fromRGB(255, 255, 255)
 	feature.TextScaled = true
@@ -49,16 +49,16 @@ local function FeatureText(parent, text)
 	feature.TextXAlignment = Enum.TextXAlignment.Left
 	feature.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	feature.BackgroundTransparency = 1
-	feature.Position = UDim2.fromScale(0.0381, 0.26)
-	feature.Size = UDim2.fromScale(0.708, 0.46)
+	feature.Position = UDim2.fromScale(0.03, 0.15)
+	feature.Size = UDim2.fromScale(0.55, 0.7)
 	feature.Parent = parent;
 	return feature;
 end
 
-local function Roundify(parent)
+local function Roundify(parent, scale, offset)
 	local uICorner = Instance.new("UICorner")
 	uICorner.Name = "UICorner"
-	uICorner.CornerRadius = UDim.new(0.5, 0)
+	uICorner.CornerRadius = UDim.new(scale or 0.5, offset or 0)
 	uICorner.Parent = parent
 	return uICorner;
 end
@@ -71,30 +71,19 @@ pikaHub.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 local main = Instance.new("Frame")
 main.Name = "Main"
-main.BackgroundColor3 = Color3.fromRGB(26, 32, 36)
-main.BorderColor3 = Color3.fromRGB(13, 16, 21)
-main.BorderSizePixel = 3
-main.Position = UDim2.fromScale(0.0211, 0.576)
-main.Size = UDim2.fromScale(0.46, 0.394)
+main.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+main.BorderSizePixel = 0
+main.Position = UDim2.fromScale(0.0158, 0.338)
+main.Size = UDim2.fromScale(0.289, 0.333)
 main.Active = true
 main.Draggable = true
 
-local top = Instance.new("Frame")
-top.Name = "Top"
-top.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-top.BackgroundTransparency = 0.5
-top.BorderColor3 = Color3.fromRGB(27, 42, 53)
-top.BorderSizePixel = 0
-top.Size = UDim2.fromScale(1, 0.2)
+Roundify(main, 0, 4)
 
 local scriptTitle = Instance.new("TextLabel")
 scriptTitle.Name = "ScriptTitle"
-scriptTitle.FontFace = Font.new(
-	"rbxasset://fonts/families/GothamSSm.json",
-	Enum.FontWeight.Heavy,
-	Enum.FontStyle.Normal
-)
-scriptTitle.Text = "PIKA HUB"
+scriptTitle.FontFace = Font.new("rbxasset://fonts/families/RobotoMono.json")
+scriptTitle.Text = "PIKAHUB"
 scriptTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 scriptTitle.TextScaled = true
 scriptTitle.TextSize = 14
@@ -102,36 +91,33 @@ scriptTitle.TextWrapped = true
 scriptTitle.TextXAlignment = Enum.TextXAlignment.Left
 scriptTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 scriptTitle.BackgroundTransparency = 1
-scriptTitle.BorderColor3 = Color3.fromRGB(27, 42, 53)
-scriptTitle.Position = UDim2.fromScale(0.054, 0.186)
-scriptTitle.Size = UDim2.fromScale(0.508, 0.606)
-scriptTitle.Parent = top
-
-top.Parent = main
+scriptTitle.Position = UDim2.fromScale(0.05, 0.01)
+scriptTitle.Size = UDim2.fromScale(0.9, 0.075)
+scriptTitle.Parent = main
 
 local scrolling = Instance.new("ScrollingFrame")
 scrolling.Name = "Scrolling"
-scrolling.BottomImage = "rbxassetid://1195495135"
-scrolling.MidImage = "rbxassetid://1195495135"
+scrolling.CanvasSize = UDim2.new()
 scrolling.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
-scrolling.ScrollBarImageTransparency = 0.5
 scrolling.ScrollBarThickness = 0
-scrolling.TopImage = "rbxassetid://1195495135"
-scrolling.BackgroundColor3 = Color3.fromRGB(33, 40, 45)
+scrolling.Active = true
+scrolling.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+scrolling.BackgroundTransparency = 1
 scrolling.BorderSizePixel = 0
-scrolling.Position = UDim2.fromScale(0, 0.2)
-scrolling.Selectable = false
-scrolling.Size = UDim2.fromScale(0.239, 0.797)
-scrolling.SelectionGroup = false
-scrolling.Parent = main
+scrolling.Position = UDim2.fromScale(0, 0.1)
+scrolling.Size = UDim2.fromScale(1, 0.08)
+
 local scrollingUIListLayout = Instance.new("UIListLayout")
 scrollingUIListLayout.Name = "UIListLayout"
+scrollingUIListLayout.FillDirection = Enum.FillDirection.Horizontal
 scrollingUIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 scrollingUIListLayout.Parent = scrolling
 
+scrolling.Parent = main
+
 local uIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
 uIAspectRatioConstraint.Name = "UIAspectRatioConstraint"
-uIAspectRatioConstraint.AspectRatio = 1.46
+uIAspectRatioConstraint.AspectRatio = 1.33
 uIAspectRatioConstraint.Parent = main
 
 main.Parent = pikaHub
@@ -209,34 +195,35 @@ local function NewSection(Section)
 	local Settings = SettingsLib(Section);
 	local sectionButton = Instance.new("TextButton")
 	sectionButton.Name = "SectionButton"
-	sectionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	sectionButton.FontFace = Font.new("rbxassetid://12187365977")
 	sectionButton.Text = Section
 	sectionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 	sectionButton.TextScaled = true
-	sectionButton.TextSize = 14
 	sectionButton.TextWrapped = true
 	sectionButton.Active = false
 	sectionButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	sectionButton.BackgroundTransparency = 0.9
 	sectionButton.BorderSizePixel = 0
 	sectionButton.Selectable = false
-	sectionButton.Size = UDim2.new(1, 0, 0, 60)
+	sectionButton.Size = UDim2.new(0, 30 + (7*string.len(Section)), 1, 0)
 	sectionButton.Parent = scrolling
-	scrolling.CanvasSize = UDim2.fromOffset(0, scrollingUIListLayout.AbsoluteContentSize.Y)
+	sectionButton.BackgroundTransparency = (Section == "Universal") and 0.8 or 1
+	scrolling.CanvasSize = UDim2.fromOffset(scrollingUIListLayout.AbsoluteContentSize.X, 0)
+	Padding(sectionButton, 0.15, 0.05, 0.05, 0.15)
 	local container = Instance.new("ScrollingFrame")
 	container.Name = "Container"
-	container.BottomImage = "rbxassetid://1195495135"
-	container.MidImage = "rbxassetid://1195495135"
+	container.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
 	container.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
-	container.ScrollBarImageTransparency = 0.5
-	container.ScrollBarThickness = 0
-	container.TopImage = "rbxassetid://1195495135"
-	container.BackgroundColor3 = Color3.fromRGB(24, 29, 33)
+	container.ScrollBarThickness = 8
+	container.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+	container.Active = true
+	container.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	container.BackgroundTransparency = 1
 	container.BorderSizePixel = 0
-	container.Position = UDim2.fromScale(0.239, 0.2)
-	container.Selectable = false
-	container.Size = UDim2.fromScale(0.761, 0.797)
-	container.SelectionGroup = false
+	container.Position = UDim2.fromScale(0, 0.18)
+	container.Size = UDim2.fromScale(1, 0.81)
+	container.Changed:Connect(function()
+		sectionButton.BackgroundTransparency = container.Visible and 0.8 or 1
+	end)
 	local uIListLayout = Instance.new("UIListLayout")
 	uIListLayout.Name = "UIListLayout"
 	uIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -254,7 +241,6 @@ local function NewSection(Section)
 	end)
 	container.Visible = false;
 	container.Parent = main;
-	Padding(sectionButton, 0.1, 0.1, 0.1, 0.1)
 	local Create = {}
 	function Create.Button(Text, Callback)
 		local info = { internalcallback = Callback }
@@ -263,31 +249,23 @@ local function NewSection(Section)
 		button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 		button.BackgroundTransparency = 0.8
 		button.BorderSizePixel = 0
-		button.Size = UDim2.new(1, 0, 0, 50)
+		button.Size = UDim2.new(1, 0, 0, 25)
 		FeatureText(button, Text)
 		info.type = button.Name
 		local button1 = Instance.new("TextButton")
 		button1.Name = "Button"
-		button1.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
-		button1.TextColor3 = Color3.fromRGB(0, 0, 0)
+		button1.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json")
+		button1.Text = "O"
+		button1.TextColor3 = Color3.fromRGB(255, 255, 255)
+		button1.TextScaled = true
 		button1.TextSize = 14
-		button1.TextTransparency = 1
+		button1.TextWrapped = true
+		button1.TextYAlignment = Enum.TextYAlignment.Top
 		button1.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		button1.BackgroundTransparency = 0.7
-		button1.BorderSizePixel = 0
-		button1.Position = UDim2.fromScale(0.784, 0.16)
-		button1.Size = UDim2.fromScale(0.183, 0.66)
+		button1.BackgroundTransparency = 0.5
+		button1.Position = UDim2.fromScale(0.85, 0.1)
+		button1.Size = UDim2.fromScale(0.1, 0.8)
 		Roundify(button1)
-		local image = Instance.new("ImageLabel")
-		image.Name = "Image"
-		image.Image = "rbxassetid://11717854254"
-		image.ScaleType = Enum.ScaleType.Fit
-		image.AnchorPoint = Vector2.new(0.5, 0.5)
-		image.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		image.BackgroundTransparency = 1
-		image.Position = UDim2.fromScale(0.5, 0.5)
-		image.Size = UDim2.fromScale(1, 0.9)
-		image.Parent = button1
 		button1.Parent = button
 		button.Parent = container;
 		sectionData[Text] = info
@@ -305,22 +283,22 @@ local function NewSection(Section)
 		number.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 		number.BackgroundTransparency = 0.8
 		number.BorderSizePixel = 0
-		number.Size = UDim2.new(1, 0, 0, 50)
+		number.Size = UDim2.new(1, 0, 0, 25)
 		FeatureText(number, Text)
 		info.type = number.Name
 		local button = Instance.new("TextBox")
 		button.Name = "Button"
-		button.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+		button.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json")
 		button.Text = tostring(Default or Min or 0)
 		button.TextColor3 = Color3.fromRGB(255, 255, 255)
 		button.TextScaled = true
 		button.TextSize = 14
 		button.TextWrapped = true
+		button.TextYAlignment = Enum.TextYAlignment.Top
 		button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		button.BackgroundTransparency = 0.7
-		button.BorderSizePixel = 0
-		button.Position = UDim2.fromScale(0.784, 0.16)
-		button.Size = UDim2.fromScale(0.183, 0.66)
+		button.BackgroundTransparency = 0.5
+		button.Position = UDim2.fromScale(0.75, 0.1)
+		button.Size = UDim2.fromScale(0.2, 0.8)
 		Roundify(button)
 		Padding(button, 0.17, 0.05, 0.05, 0.17)
 		button.Parent = number
@@ -350,26 +328,26 @@ local function NewSection(Section)
 		local Default = Default or "";
 		local info = { value = Default };
 		local number = Instance.new("Frame")
-		number.Name = "Number"
+		number.Name = "String"
 		number.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 		number.BackgroundTransparency = 0.8
 		number.BorderSizePixel = 0
-		number.Size = UDim2.new(1, 0, 0, 50)
+		number.Size = UDim2.new(1, 0, 0, 25)
 		FeatureText(number, Text)
 		info.type = number.Name
 		local button = Instance.new("TextBox")
 		button.Name = "Button"
-		button.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+		button.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json")
 		button.Text = Default
 		button.TextColor3 = Color3.fromRGB(255, 255, 255)
 		button.TextScaled = true
 		button.TextSize = 14
 		button.TextWrapped = true
+		button.TextYAlignment = Enum.TextYAlignment.Top
 		button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		button.BackgroundTransparency = 0.7
-		button.BorderSizePixel = 0
-		button.Position = UDim2.fromScale(0.784, 0.16)
-		button.Size = UDim2.fromScale(0.183, 0.66)
+		button.BackgroundTransparency = 0.5
+		button.Position = UDim2.fromScale(0.65, 0.1)
+		button.Size = UDim2.fromScale(0.3, 0.8)
 		Roundify(button)
 		Padding(button, 0.17, 0.05, 0.05, 0.17)
 		button.Parent = number
@@ -396,37 +374,35 @@ local function NewSection(Section)
 		toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 		toggle.BackgroundTransparency = 0.8
 		toggle.BorderSizePixel = 0
-		toggle.Size = UDim2.new(1, 0, 0, 50)
+		toggle.Size = UDim2.new(1, 0, 0, 25)
 		FeatureText(toggle, Text)
 		info.type = toggle.Name
 		local button = Instance.new("TextButton")
 		button.Name = "Button"
-		button.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json")
+		button.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json")
 		button.Text = ""
-		button.TextColor3 = Color3.fromRGB(0, 0, 0)
+		button.TextColor3 = Color3.fromRGB(255, 255, 255)
+		button.TextScaled = true
 		button.TextSize = 14
-		button.TextTransparency = 1
+		button.TextWrapped = true
+		button.TextYAlignment = Enum.TextYAlignment.Top
 		button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		button.BackgroundTransparency = 0.7
-		button.BorderSizePixel = 0
-		button.Position = UDim2.fromScale(0.784, 0.16)
-		button.Size = UDim2.fromScale(0.183, 0.66)
+		button.BackgroundTransparency = 0.5
+		button.Position = UDim2.fromScale(0.8, 0.1)
+		button.Size = UDim2.fromScale(0.15, 0.8)
 		Roundify(button)
 		local frame = Instance.new("Frame")
 		frame.Name = "Frame"
-		frame.AnchorPoint = Vector2.new(0, 0.5)
-		frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-		frame.BackgroundTransparency = 0.5
-		frame.BorderSizePixel = 0
-		frame.Position = UDim2.fromScale(0, 0.5)
+		frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		frame.BackgroundTransparency = 0.9
 		frame.Size = UDim2.fromScale(0.5, 1)
 		Roundify(frame)
 		frame.Parent = button
 		button.Parent = toggle
 		toggle.Parent = container;
 		info.internalcallback = function(value)
-			frame.Position = (value and UDim2.fromScale(0.5, 0.5) or UDim2.fromScale(0, 0.5))
 			frame.BackgroundColor3 = (value and Color3.new(0, 1, 0) or Color3.new(1, 0, 0))
+			frame.Position = (value and UDim2.fromScale(0.5, 0) or UDim2.fromScale(0, 0))
 			info.value = value;
 			if (Callback ~= nil) then
 				task.spawn(Callback, info.value);
@@ -569,7 +545,7 @@ Universal.Button("Moon's Dex Explorer", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
 end)
 MC.Visible = true;
-local Redwood = NewSection("Redwood Prison: Reworked")
+local Redwood = NewSection("Evergreen Prison")
 Redwood.Toggle("Disable Mountain Wind", false, function(value)
 	if (value) then
 		local function NoWinded(c)
