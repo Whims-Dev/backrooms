@@ -1035,7 +1035,7 @@ local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
 							local worldPoint = head.Position;
 							local torso = char:FindFirstChild("Torso")
 							if (torso) then
-								worldPoint = (worldPoint:Lerp(torso.Position, 0.5))
+								worldPoint = (worldPoint:Lerp(torso.Position, 0.25))
 							end
 							local vector, onScreen = Camera:WorldToScreenPoint(worldPoint)
 							local screenPoint = Vector2.new(vector.X, vector.Y)
