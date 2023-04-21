@@ -471,16 +471,16 @@ local aimbotIgnoreTeam = Universal.Toggle("Ignore Team", true)
 local aimbotLegit = Universal.Toggle("Legit Measure", false)
 local aimbotSmoothingInfo = Universal.Number("Smoothing (1-10)", 3, 1, 10)
 local function CreateViewExample(sp)
-    local sg = Instance.new("ScreenGui")
-    local frame = Instance.new("Frame")
-    frame.Rotation = 45
-    frame.AnchorPoint = Vector2.new(0.5, 0.5)
-    frame.BorderSizePixel = 0
-    frame.Size = UDim2.fromOffset(5, 5)
-    frame.Position = UDim2.fromOffset(sp.X, sp.Y)
-    frame.Parent = sg
-    sg.Parent = CoreGui
-    Debris:AddItem(sg, 1)
+	local sg = Instance.new("ScreenGui")
+	local frame = Instance.new("Frame")
+	frame.Rotation = 45
+	frame.AnchorPoint = Vector2.new(0.5, 0.5)
+	frame.BorderSizePixel = 0
+	frame.Size = UDim2.fromOffset(5, 5)
+	frame.Position = UDim2.fromOffset(sp.X, sp.Y)
+	frame.Parent = sg
+	sg.Parent = CoreGui
+	Debris:AddItem(sg, 1)
 end
 local function GetClosestToScreenPoint(ScreenPoint)
 	local Closest, Target = 120, nil;
@@ -507,12 +507,12 @@ local function GetClosestToScreenPoint(ScreenPoint)
 		if (e == Player.Character) then continue end
 		local hum: Humanoid = e:FindFirstChildWhichIsA("Humanoid");
 		local head: BasePart = e:FindFirstChild("Head");
-        if (aimbotIgnoreTeam.value) then
-            local player = Players:GetPlayerFromCharacter(e);
-            if (player ~= nil) and (table.find(teamsToIgnore, player.Team.Name)) then
-                continue
-            end
-        end
+		if (aimbotIgnoreTeam.value) then
+			local player = Players:GetPlayerFromCharacter(e);
+			if (player ~= nil) and (table.find(teamsToIgnore, player.Team.Name)) then
+				continue
+			end
+		end
 		if (hum ~= nil) and (head ~= nil) and (hum.Health > 0) then
 			local Point, OnScreen = Camera:WorldToScreenPoint(head.Position);
 			local Distance = (Vector2.new(Point.X, Point.Y) - ScreenPoint).Magnitude;
@@ -660,15 +660,6 @@ Deepwoken.Toggle("No Fog", false, function(value)
 		DestroyConnection("dw No Fog")
 	end
 end)
---[[
-Deepwoken.Button("Give Ethiron's Gaze", function()
-	if (not Player.Backpack:FindFirstChild("Talent:Ethiron's Gaze")) then
-		local folder = Instance.new("Folder")
-		folder.Name = "Talent:Ethiron's Gaze"
-		folder.Parent = Player.Backpack
-	end
-end)
---]]
 Deepwoken.Toggle("Auto Charisma", false, function(value)
 	if (value) then
 		local Bindable; do
@@ -918,6 +909,30 @@ local antiNetInfo; antiNetInfo = VH3.Toggle("Net (1K Escape)", false, function(v
 		DestroyConnection("VH3_1knetescape")
 	end
 end)
+local Criminality = NewSection("Criminality")
+local crimAimInfo; crimAimInfo = Criminality.Toggle("Aimbot", false, function(value)
+	if (not value)then
+		DestroyConnection("ActiveCrimAimbot")
+	end
+end)
+local crimFriends = {}
+local crimIgnoreFriends; crimIgnoreFriends = Criminality.Toggle("Ignore Friends", true, function(value)
+	if (not value) then
+		DestroyConnection("CrimNewFriend")
+		table.clear(crimFriends)
+	elseif (value) then
+		MakeConnection("CrimNewFriend", Players.PlayerAdded:Connect(function(p)
+			if (p:IsFriendsWith(Player.UserId)) then
+				table.insert(crimFriends, p)
+			end
+		end))
+		for _, p in pairs(Players:GetPlayers()) do
+			if (p:IsFriendsWith(Player.UserId)) then
+				table.insert(crimFriends, p)
+			end
+		end
+	end
+end)
 
 local Config = NewSection("Configuration")
 local configInfo = Config.String("Config Name", "")
@@ -984,41 +999,127 @@ local speedDash = RunService.RenderStepped:Connect(function(dt)
 	end
 end)
 
+local function GetCharacters()
+	local Characters = {}
+	for _, c in pairs(Player.Character.Parent:GetChildren()) do
+		if (c == Player.Character) then continue end
+		if (c:FindFirstChildOfClass("Humanoid") and c:FindFirstChild("Head") and c:FindFirstChild("HumanoidRootPart")) then
+			table.insert(Characters, c)
+		end
+	end
+	return Characters;
+end
+
 local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
 	if (gpe) then return end
 	if (input.KeyCode == Enum.KeyCode.End) then
 		main.Visible = not main.Visible;
-	elseif (input.UserInputType == Enum.UserInputType.MouseButton2) and (aimbotInfo.value) then
-		local OffsetTimer, Offset, AimName = 0, Vector3.new(), "Head";
-		MakeConnection("ActiveAimbot", RunService.Heartbeat:Connect(function(dt)
-			local AimEntity = GetClosestToScreenPoint(Vector2.new(Mouse.X, Mouse.Y));
-			if (AimEntity ~= nil) then
-				local AimPart = AimEntity:FindFirstChild(AimName) or AimEntity:FindFirstChild("Head") or AimEntity:FindFirstChild("Torso");
-				if (AimPart ~= nil) then
-					if (game.GameId == 3809673475) then
-						local distanceMultiplier = ((Player.Character.HumanoidRootPart.Position - AimPart.Position).Magnitude / 100);
-						Offset = ((AimPart.Parent.HumanoidRootPart.Velocity/12) * distanceMultiplier) + Vector3.new(0, distanceMultiplier/3, 0)
+	elseif (input.UserInputType == Enum.UserInputType.MouseButton2) then
+		if (aimbotInfo.value) then
+			if (crimAimInfo.value) then
+				MakeConnection("ActiveCrimAimbot", RunService.Heartbeat:Connect(function()
+					local character = Player.Character
+					if (character == nil) then return end
+					local rootpart = character:FindFirstChild("HumanoidRootPart")
+					if (rootpart == nil) then return end
+					local withinFOV = {}
+					local canBehind = false;
+					for _, char in pairs(GetCharacters()) do
+						local player = Players:GetPlayerFromCharacter(char)
+						if (player) and (crimIgnoreFriends.value) and (table.find(crimFriends, player)) then
+							continue
+						end
+						local head = char:FindFirstChild("Head")
+						local hrp = char:FindFirstChild("HumanoidRootPart")
+						if (head and hrp) then
+							local worldPoint = head.Position;
+							local torso = char:FindFirstChild("Torso")
+							if (torso) then
+								worldPoint = (worldPoint:Lerp(torso.Position, 0.5))
+							end
+							local vector, onScreen = Camera:WorldToScreenPoint(worldPoint)
+							local screenPoint = Vector2.new(vector.X, vector.Y)
+							if (not onScreen) then continue end
+							local magn = (screenPoint - Vector2.new(Mouse.X, Mouse.Y)).Magnitude
+							if (magn < 120) then
+								local info = {
+									target = worldPoint,
+									distanceFromCenter = magn,
+									behindWall = false,
+									rootpart = hrp
+								};
+								local rayOrigin = Camera.CFrame.Position
+								local rayDirection = (head.Position - Camera.CFrame.Position).Magnitude * (head.Position - Camera.CFrame.Position).Unit
+								local raycastParams = RaycastParams.new()
+								raycastParams.FilterDescendantsInstances = {Player.Character, char, workspace.Camera}
+								raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+								raycastParams.IgnoreWater = true
+								local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+								if (raycastResult) then
+									info.behindWall = true
+								else
+									canBehind = false
+								end
+								table.insert(withinFOV, info)
+							end
+						end
 					end
-					Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, AimPart.Position + Offset), aimbotSmoothingInfo.value/10)
-				end
+					if (#withinFOV > 0) then
+						if (not canBehind) and (#withinFOV > 1) then
+							for _, v in pairs(withinFOV) do
+								if (v.behindWall) then
+									table.remove(withinFOV, table.find(withinFOV, v))
+								end
+							end
+						end
+						table.sort(withinFOV, function(a, b)
+							return a.distanceFromCenter < b.distanceFromCenter;
+						end)
+						local closest = withinFOV[1];
+						if (closest) then
+							local hrp = closest.rootpart
+							local magn = (closest.target - rootpart.Position).Magnitude;
+							local distanceMultiplier = (magn / 100);
+							coroutine.wrap(function()
+								Camera.CFrame = Camera.CFrame:lerp(CFrame.new(Camera.CFrame.Position, closest.target + ((hrp.Velocity/15) * distanceMultiplier)), 0.3)
+							end)()
+						end
+					end
+				end))
+			else
+				local OffsetTimer, Offset, AimName = 0, Vector3.new(), "Head";
+				MakeConnection("ActiveAimbot", RunService.Heartbeat:Connect(function(dt)
+					local AimEntity = GetClosestToScreenPoint(Vector2.new(Mouse.X, Mouse.Y));
+					if (AimEntity ~= nil) then
+						local AimPart = AimEntity:FindFirstChild(AimName) or AimEntity:FindFirstChild("Head") or AimEntity:FindFirstChild("Torso");
+						if (AimPart ~= nil) then
+							if (game.GameId == 3809673475) then
+								local distanceMultiplier = ((Player.Character.HumanoidRootPart.Position - AimPart.Position).Magnitude / 100);
+								Offset = ((AimPart.Parent.HumanoidRootPart.Velocity/12) * distanceMultiplier) + Vector3.new(0, distanceMultiplier/3, 0)
+							end
+							Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, AimPart.Position + Offset), aimbotSmoothingInfo.value/10)
+						end
+					end
+					OffsetTimer -= dt;
+					if (OffsetTimer <= 0) then
+						AimName = (math.random(1, 4) == 1) and "Torso" or "Head";
+						if (aimbotLegit.value) then
+							Offset = Vector3.new(math.random(-5, 5)/10, math.random(-5, 5)/10, math.random(-5, 5)/10)
+						else
+							Offset = Vector3.new(0, 0.1, 0)
+						end
+						OffsetTimer = math.random(5, 30)/100;
+					end
+				end))
 			end
-			OffsetTimer -= dt;
-			if (OffsetTimer <= 0) then
-				AimName = (math.random(1, 4) == 1) and "Torso" or "Head";
-                if (aimbotLegit.value) then
-				    Offset = Vector3.new(math.random(-5, 5)/10, math.random(-5, 5)/10, math.random(-5, 5)/10)
-                else
-                    Offset = Vector3.new(0, 0.1, 0)
-                end
-				OffsetTimer = math.random(5, 30)/100;
-			end
-		end))
+		end
 	end
 end)
 
 local InputEnded = UserInputService.InputEnded:Connect(function(input)
 	if (input.UserInputType == Enum.UserInputType.MouseButton2) then
 		DestroyConnection("ActiveAimbot")
+		DestroyConnection("ActiveCrimAimbot")
 	end
 end)
 
