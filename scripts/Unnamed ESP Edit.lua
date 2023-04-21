@@ -558,6 +558,34 @@ local Modules = {
 			{'kpShowLlama', 'Show Llama', true},
 		};
 	},
+	[1494262959] = {
+		CustomESP = function()
+			for _, v in pairs(Workspaced) do
+				if (v.Parent.Name == "SpawnedPiles") then
+					local part = Options.crimShowPiles.Value and v:FindFirstChild("MeshPart") or nil;
+					local particle = (part and part:FindFirstChild("Particle"))
+					RenderList:AddOrUpdateInstance(v, part, (v.Name:sub(1, 1) == "C") and "Crate" or "Pile", (particle and particle.Color.Keypoints[1].Value) or Color3.new(0, 0, 0));
+				end
+			end
+		end,
+		CustomPlayerTag = function(Player)
+			local Character = Player.Character;
+			local Status = {};
+			local cTool = Character:FindFirstChildWhichIsA("Tool")
+			if (cTool ~= nil) and (Options.crimShowWeapon.Value) then
+				table.insert(Status, cTool.Name)
+			end
+			return (#Status > 0) and ("\n[".. table.concat(Status, " | ") .."]") or ""
+		end,
+		Initialize = function()
+			local Filter = workspace:WaitForChild("Filter")
+			load(Filter:WaitForChild("SpawnedPiles"), Workspaced)
+		end;
+		MoreOptions = {
+			{'crimShowPiles', 'Show Piles & Crates', true},
+			{'crimShowWeapon', 'Show Player Weapon', true},
+		};
+	},
 };
 
 local Module = Modules[game.PlaceId] or Modules[game.GameId]
