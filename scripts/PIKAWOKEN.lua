@@ -419,6 +419,20 @@ local function NewSection(Section)
 	return Create, container;
 end
 
+local function CreateSound(Parent, Id, Pitch, Volume)
+    local Sound = Instance.new("Sound")
+    Sound.Volume = (Volume or 1)
+    Sound.PlaybackSpeed = (Pitch or 1)
+    Sound.SoundId = (tonumber(Id) and ("rbxassetid://".. Id) or Id)
+    Sound.Parent = Parent
+    if (not Sound.IsLoaded) then
+        Sound.Loaded:Wait()
+    end
+    Sound:Play()
+    Debris:AddItem(Sound, Sound.TimeLength * Sound.PlaybackSpeed)
+	return Sound
+end
+
 local Universal, MC = NewSection("Universal")
 Universal.Button("Unnamed ESP", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Whims-Dev/backrooms/main/scripts/Unnamed%20ESP%20Edit.lua", true))()
@@ -587,6 +601,7 @@ Deepwoken.Toggle("Mod Check", false, function(value)
 			local Rank = p:GetRankInGroup(5212858);
 			if (Rank) and (Rank >= 1) then
 				Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank(Rank).Name), math.huge)
+				CreateSound(workspace.CurrentCamera, 8917829915)
 			end
 		end))
 		local found = false;
@@ -595,6 +610,7 @@ Deepwoken.Toggle("Mod Check", false, function(value)
 				local Rank = p:GetRankInGroup(5212858);
 				if (Rank) and (Rank >= 1) then
 					Notify("Mod Alert", string.format("%s (%s)\nRank: %s", p.Name, p.UserId, GetRoleInfoFromRank(Rank).Name), math.huge)
+					CreateSound(workspace.CurrentCamera, 8917829915)
 					found = true;
 				end
 			end, function(a)
@@ -1064,7 +1080,7 @@ local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
 								local rayOrigin = Camera.CFrame.Position
 								local rayDirection = (head.Position - Camera.CFrame.Position).Magnitude * (head.Position - Camera.CFrame.Position).Unit
 								local raycastParams = RaycastParams.new()
-								raycastParams.FilterDescendantsInstances = {Player.Character, char, workspace.Camera}
+								raycastParams.FilterDescendantsInstances = {Player.Character, char, workspace.Camera, workspace.Filter, workspace.Map.Doors, workspace.Map.Shopz}
 								raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
 								raycastParams.IgnoreWater = true
 								local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
