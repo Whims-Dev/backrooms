@@ -1012,8 +1012,9 @@ end)
 
 local function GetCharacters()
 	local Characters = {}
-	for _, c in pairs(Player.Character.Parent:GetChildren()) do
-		if (c == Player.Character) then continue end
+	for _, p in pairs(Players:GetPlayers()) do
+		local c = p.Character
+		if (c == nil) or (c == Player.Character) then continue end
 		if (c:FindFirstChildOfClass("Humanoid") and c:FindFirstChild("Head") and c:FindFirstChild("HumanoidRootPart")) then
 			table.insert(Characters, c)
 		end
