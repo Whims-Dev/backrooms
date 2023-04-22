@@ -1023,7 +1023,7 @@ local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
 					local rootpart = character:FindFirstChild("HumanoidRootPart")
 					if (rootpart == nil) then return end
 					local withinFOV = {}
-					local canBehind = false;
+					local canBehind = true;
 					for _, char in pairs(GetCharacters()) do
 						local player = Players:GetPlayerFromCharacter(char)
 						if (player) and (crimIgnoreFriends.value) and (table.find(crimFriends, player)) then
@@ -1044,6 +1044,7 @@ local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
 							if (magn < 120) then
 								local info = {
 									target = worldPoint,
+									distanceFromPlayer = (worldPoint - rootpart.Position).Magnitude,
 									distanceFromCenter = magn,
 									behindWall = false,
 									rootpart = hrp
@@ -1065,24 +1066,25 @@ local InputBegan = UserInputService.InputBegan:Connect(function(input, gpe)
 						end
 					end
 					if (#withinFOV > 0) then
-						if (not canBehind) and (#withinFOV > 1) then
+						local closest, farthestdistance = nil, math.huge
+						if (not canBehind) then
 							for _, v in pairs(withinFOV) do
-								if (v.behindWall) then
-									table.remove(withinFOV, table.find(withinFOV, v))
+								if (not v.behindWall) and (v.distanceFromCenter < farthestdistance) then
+									closest, farthestdistance = v, v.distanceFromCenter
+								end
+							end
+						else
+							for _, v in pairs(withinFOV) do
+								if (v.distanceFromPlayer < farthestdistance) then
+									closest, farthestdistance = v, v.distanceFromPlayer
 								end
 							end
 						end
-						table.sort(withinFOV, function(a, b)
-							return a.distanceFromCenter < b.distanceFromCenter;
-						end)
-						local closest = withinFOV[1];
 						if (closest) then
 							local hrp = closest.rootpart
 							local magn = (closest.target - rootpart.Position).Magnitude;
 							local distanceMultiplier = (magn / 100);
-							coroutine.wrap(function()
-								Camera.CFrame = Camera.CFrame:lerp(CFrame.new(Camera.CFrame.Position, closest.target + ((hrp.Velocity/15) * distanceMultiplier)), 0.3)
-							end)()
+							Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, closest.target + ((hrp.Velocity/15) * distanceMultiplier)), 0.3)
 						end
 					end
 				end))
