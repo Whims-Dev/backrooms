@@ -933,6 +933,17 @@ local crimIgnoreFriends; crimIgnoreFriends = Criminality.Toggle("Ignore Friends"
 		end
 	end
 end)
+local crimHitboxMult = Criminality.Number("Hitbox Size Multiplier", 1, 1, 10)
+local adjustedHitboxes = {}
+Criminality.Button("Multiply Hitboxes", function()
+	for _, c in pairs(Player.Character:GetDescendants()) do
+		if (c:IsA("Attachment")) and (c.Name == "DmgPoint") then
+			local hbSize = adjustedHitboxes[c] or c.Position
+			adjustedHitboxes[c] = hbSize
+			c.Position = hbSize * crimHitboxMult.value
+		end
+	end
+end)
 
 local Config = NewSection("Configuration")
 local configInfo = Config.String("Config Name", "")
